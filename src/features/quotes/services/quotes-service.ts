@@ -1,6 +1,9 @@
 import type {
+  GetAdminQuoteRequestByIdResponse,
   AdminQuoteRequestsResponse,
   GetAdminQuoteRequestsQuery,
+  UpdateAdminQuoteRequestStatusPayload,
+  UpdateAdminQuoteRequestStatusResponse,
 } from "@/src/features/quotes/types/quote";
 import { apiClient } from "@/src/services/api-client";
 
@@ -20,6 +23,18 @@ export const quotesService = {
   list(query: GetAdminQuoteRequestsQuery = {}) {
     return apiClient.request<AdminQuoteRequestsResponse>(
       `/admin/quote-requests${toQueryString(query)}`,
+    );
+  },
+  getById(id: string) {
+    return apiClient.request<GetAdminQuoteRequestByIdResponse>(`/admin/quote-requests/${id}`);
+  },
+  updateStatus(id: string, payload: UpdateAdminQuoteRequestStatusPayload) {
+    return apiClient.request<UpdateAdminQuoteRequestStatusResponse, UpdateAdminQuoteRequestStatusPayload>(
+      `/admin/quote-requests/${id}/status`,
+      {
+        method: "PATCH",
+        body: payload,
+      },
     );
   },
 };

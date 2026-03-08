@@ -12,6 +12,10 @@ export type AdminQuoteRequestItem = {
   quantity: number;
 };
 
+export type AdminQuoteRequestDetailItem = AdminQuoteRequestItem & {
+  createdAt: string;
+};
+
 export type AdminQuoteRequest = {
   id: string;
   customerName: string;
@@ -25,6 +29,10 @@ export type AdminQuoteRequest = {
   createdAt: string;
   updatedAt: string;
   items: AdminQuoteRequestItem[];
+};
+
+export type AdminQuoteRequestDetail = Omit<AdminQuoteRequest, "items"> & {
+  items: AdminQuoteRequestDetailItem[];
 };
 
 export type AdminQuoteRequestsMeta = {
@@ -45,3 +53,19 @@ export type GetAdminQuoteRequestsQuery = {
   page?: number;
   limit?: number;
 };
+
+export type GetAdminQuoteRequestByIdResponse = {
+  data: AdminQuoteRequestDetail;
+};
+
+export type UpdateAdminQuoteRequestStatusPayload = {
+  status: QuoteRequestStatus;
+  internalNotes?: string;
+};
+
+export type UpdateAdminQuoteRequestStatusResponse = {
+  message: string;
+  data: AdminQuoteRequestDetail;
+};
+
+export type QuoteStatusFilter = "all" | "new" | "reviewed" | "quoted" | "closed";

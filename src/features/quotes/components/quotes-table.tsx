@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { QuoteStatusBadge } from "@/src/features/quotes/components/quote-status-badge";
 import type { AdminQuoteRequest } from "@/src/features/quotes/types/quote";
 
@@ -31,6 +32,7 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Source</th>
             <th className="px-4 py-3">Received</th>
+            <th className="px-4 py-3 text-right">Details</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">
@@ -50,6 +52,14 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
               </td>
               <td className="px-4 py-4 text-sm text-slate-700">{quote.source}</td>
               <td className="px-4 py-4 text-sm text-slate-700">{formatDate(quote.createdAt)}</td>
+              <td className="px-4 py-4 text-right">
+                <Link
+                  href={`/admin/quotes/${quote.id}`}
+                  className="text-sm font-medium text-slate-700 underline-offset-4 hover:text-slate-900 hover:underline"
+                >
+                  Open
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>
