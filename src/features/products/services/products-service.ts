@@ -1,5 +1,7 @@
 import type {
   AdminCategoriesListResponse,
+  CreateAdminProductPayload,
+  CreateAdminProductResponse,
   ProductAdminDetailResponse,
   ProductAdminListQuery,
   ProductAdminListResponse,
@@ -32,6 +34,15 @@ export const productsService = {
   },
   listCategories() {
     return apiClient.request<AdminCategoriesListResponse>("/admin/categories");
+  },
+  create(payload: CreateAdminProductPayload) {
+    return apiClient.request<CreateAdminProductResponse, CreateAdminProductPayload>(
+      "/admin/products",
+      {
+        method: "POST",
+        body: payload,
+      },
+    );
   },
   update(id: string, payload: UpdateAdminProductPayload) {
     return apiClient.request<UpdateAdminProductResponse, UpdateAdminProductPayload>(

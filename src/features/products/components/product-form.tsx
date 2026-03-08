@@ -5,34 +5,39 @@ import { useState } from "react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
-import type {
-  CategoryAdmin,
-  ProductAdminDetail,
-  UpdateAdminProductPayload,
-} from "@/src/features/products/types/product";
+import type { CategoryAdmin } from "@/src/features/products/types/product";
 
-type ProductEditFormProps = {
-  product: ProductAdminDetail;
-  categories: CategoryAdmin[];
-  isSaving: boolean;
-  onSubmit: (payload: UpdateAdminProductPayload) => Promise<void>;
+export type ProductFormValues = {
+  name: string;
+  slug: string;
+  description: string;
+  categoryId: string;
+  isActive: boolean;
 };
 
-export function ProductEditForm({
-  product,
+type ProductFormProps = {
+  initialValues: ProductFormValues;
+  categories: CategoryAdmin[];
+  isSaving: boolean;
+  submitLabel: string;
+  onSubmit: (payload: ProductFormValues) => Promise<void>;
+};
+
+export function ProductForm({
+  initialValues,
   categories,
   isSaving,
+  submitLabel,
   onSubmit,
-}: ProductEditFormProps) {
-  const [name, setName] = useState(product.name);
-  const [slug, setSlug] = useState(product.slug);
-  const [description, setDescription] = useState(product.description ?? "");
-  const [categoryId, setCategoryId] = useState(product.category.id);
-  const [isActive, setIsActive] = useState(product.isActive);
+}: ProductFormProps) {
+  const [name, setName] = useState(initialValues.name);
+  const [slug, setSlug] = useState(initialValues.slug);
+  const [description, setDescription] = useState(initialValues.description);
+  const [categoryId, setCategoryId] = useState(initialValues.categoryId);
+  const [isActive, setIsActive] = useState(initialValues.isActive);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     await onSubmit({
       name: name.trim(),
       slug: slug.trim(),
@@ -76,9 +81,7 @@ export function ProductEditForm({
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
               required
             >
-              {categories.length === 0 ? (
-                <option value="">No categories available</option>
-              ) : null}
+              {categories.length === 0 ? <option value="">No categories available</option> : null}
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name} {category.isActive ? "" : "(Inactive)"}
@@ -99,8 +102,8 @@ export function ProductEditForm({
         </div>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save Changes"}
+          <Button type="submit" disabled={isSaving || categories.length === 0}>
+            {isSaving ? "Saving..." : submitLabel}
           </Button>
         </div>
       </form>

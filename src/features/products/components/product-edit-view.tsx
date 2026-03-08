@@ -5,7 +5,8 @@ import { ArrowLeft, RotateCw } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { PageHeader } from "@/src/components/ui/page-header";
-import { ProductEditForm } from "@/src/features/products/components/product-edit-form";
+import { ProductForm, type ProductFormValues } from "@/src/features/products/components/product-form";
+import { ProductImagesPanel } from "@/src/features/products/components/product-images-panel";
 import { ProductStatusBadge } from "@/src/features/products/components/product-status-badge";
 import { useProductEdit } from "@/src/features/products/hooks/use-product-edit";
 import type { UpdateAdminProductPayload } from "@/src/features/products/types/product";
@@ -30,7 +31,14 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
     refetch,
   } = useProductEdit(productId);
 
-  const handleSubmit = async (payload: UpdateAdminProductPayload) => {
+  const handleSubmit = async (values: ProductFormValues) => {
+    const payload: UpdateAdminProductPayload = {
+      name: values.name,
+      slug: values.slug,
+      description: values.description,
+      categoryId: values.categoryId,
+      isActive: values.isActive,
+    };
     await saveProduct(payload);
   };
 
@@ -97,11 +105,18 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
 
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">
-          <ProductEditForm
+          <ProductForm
             key={`${product.id}-${product.updatedAt}`}
-            product={product}
+            initialValues={{
+              name: product.name,
+              slug: product.slug,
+              description: product.description ?? "",
+              categoryId: product.category.id,
+              isActive: product.isActive,
+            }}
             categories={categories}
             isSaving={isSaving}
+            submitLabel="Save Changes"
             onSubmit={handleSubmit}
           />
 
@@ -129,30 +144,7 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
           </Card>
         </div>
 
-        <Card>
-          <h2 className="text-lg font-semibold text-slate-900">Image Preview</h2>
-          {product.images.length === 0 ? (
-            <p className="mt-2 text-sm text-slate-500">No images configured for this product.</p>
-          ) : (
-            <div className="mt-3 space-y-3">
-              {product.images.map((image) => (
-                <div key={image.id} className="rounded-lg border border-slate-200 p-3">
-                  <a
-                    href={image.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm font-medium text-slate-700 underline-offset-4 hover:text-slate-900 hover:underline"
-                  >
-                    {image.url}
-                  </a>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Order: {image.order} • {image.alt ?? "No alt text"}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
+        <ProductImagesPanel images={product.images} productName={product.name} />
       </div>
     </section>
   );

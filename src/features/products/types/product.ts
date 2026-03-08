@@ -77,6 +77,19 @@ export type UpdateAdminProductResponse = {
   data: ProductAdminDetail;
 };
 
+export type CreateAdminProductPayload = {
+  name: string;
+  slug: string;
+  categoryId: string;
+  description?: string;
+  isActive?: boolean;
+};
+
+export type CreateAdminProductResponse = {
+  message: string;
+  data: ProductAdminDetail;
+};
+
 export type ProductAdminDetailResponse = {
   data: ProductAdminDetail;
 };

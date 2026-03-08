@@ -1,8 +1,9 @@
 "use client";
 
 import type { FormEvent } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { RotateCw, Search } from "lucide-react";
+import { Plus, RotateCw, Search } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
@@ -68,18 +69,27 @@ export function ProductsView() {
         title="Products"
         subtitle="Manage catalog visibility, statuses, and product overview."
         action={
-          <Button
-            variant="secondary"
-            iconLeft={<RotateCw className="size-4" />}
-            onClick={() => {
-              refetch().catch(() => {
-                // Refetch errors are captured in hook state.
-              });
-            }}
-            className="w-full md:w-auto"
-          >
-            Refresh
-          </Button>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Link
+              href="/admin/products/new"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+            >
+              <Plus className="size-4" />
+              New Product
+            </Link>
+            <Button
+              variant="secondary"
+              iconLeft={<RotateCw className="size-4" />}
+              onClick={() => {
+                refetch().catch(() => {
+                  // Refetch errors are captured in hook state.
+                });
+              }}
+              className="w-full sm:w-auto"
+            >
+              Refresh
+            </Button>
+          </div>
         }
       />
 
