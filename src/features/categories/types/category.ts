@@ -79,3 +79,14 @@ export type UpdateCategoryResponse = {
   message: string;
   data: CategoryAdmin;
 };
+
+export type DeleteCategoryResponse = {
+  message: string;
+  data: {
+    id: string;
+    deletedProductsCount: number;
+    deletedVariants: boolean;
+    deletedImages: boolean;
+    cloudinaryCleanupPendingPublicIds: string[];
+  };
+};

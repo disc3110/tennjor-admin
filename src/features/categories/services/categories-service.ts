@@ -4,6 +4,7 @@ import type {
   CategoryListQuery,
   CreateCategoryPayload,
   CreateCategoryResponse,
+  DeleteCategoryResponse,
   UpdateCategoryPayload,
   UpdateCategoryResponse,
 } from "@/src/features/categories/types/category";
@@ -44,5 +45,10 @@ export const categoriesService = {
         body: payload,
       },
     );
+  },
+  delete(id: string) {
+    return apiClient.request<DeleteCategoryResponse>(`/admin/categories/${id}`, {
+      method: "DELETE",
+    });
   },
 };

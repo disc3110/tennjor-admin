@@ -22,13 +22,32 @@ Data store is PostgreSQL via Prisma.
 
 - Base URL: `http://localhost:3000` by default in local dev (from `main.ts` listening on `process.env.PORT ?? 3000`).
 - No global prefix (routes are mounted exactly as defined in controllers).
-- Content type: `application/json`.
+- Content type: `application/json` for most endpoints.
+- Multipart uploads: `multipart/form-data` for file upload endpoints.
 - Authenticated endpoints require:
   - `Authorization: Bearer <accessToken>`
 
 CORS:
 
 - CORS is enabled with `origin: true` and `credentials: true`.
+
+## Media Configuration (Cloudinary)
+
+Backend-managed media endpoints rely on Cloudinary server-side configuration:
+
+- `CLOUDINARY_CLOUD_NAME` (required)
+- `CLOUDINARY_API_KEY` (required)
+- `CLOUDINARY_API_SECRET` (required)
+- `CLOUDINARY_FOLDER_ROOT` (required)
+- `CLOUDINARY_PRODUCTS_FOLDER` (required)
+- `CLOUDINARY_CATEGORIES_FOLDER` (required)
+
+If required vars are missing, backend startup fails with a clear configuration error.
+
+Folder strategy used by backend services:
+
+- Product images: `<CLOUDINARY_FOLDER_ROOT>/<CLOUDINARY_PRODUCTS_FOLDER>/<product-slug>/`
+- Category images (future endpoint hook): `<CLOUDINARY_FOLDER_ROOT>/<CLOUDINARY_CATEGORIES_FOLDER>/<category-slug>/`
 
 ## Authentication
 
@@ -75,35 +94,40 @@ Common validation constraints used:
 
 ## Endpoint Summary Table
 
-| Method | Path                                  | Auth required | Admin only    | Description                                   |
-| ------ | ------------------------------------- | ------------- | ------------- | --------------------------------------------- |
-| GET    | `/`                                   | No            | No            | Health-like hello string                      |
-| GET    | `/users`                              | No            | No            | List users (safe fields)                      |
-| POST   | `/auth/login`                         | No            | No            | Authenticate and get JWT                      |
-| GET    | `/catalog/categories`                 | No            | No            | Public active categories (filtered)           |
-| GET    | `/catalog/products`                   | No            | No            | Public active products list                   |
-| GET    | `/catalog/products/:slug`             | No            | No            | Public product detail by slug                 |
-| POST   | `/quote-requests`                     | No            | No            | Create quote request                          |
-| GET    | `/admin/dashboard/stats`              | Yes           | No (JWT only) | Dashboard KPIs                                |
-| GET    | `/admin/dashboard/stats/export/csv`   | Yes           | Yes           | Download dashboard stats + quote requests CSV |
-| GET    | `/admin/products`                     | Yes           | No (JWT only) | Admin product list                            |
-| GET    | `/admin/products/export/csv`          | Yes           | Yes           | Download products CSV                         |
-| GET    | `/admin/products/:id`                 | Yes           | No (JWT only) | Admin product detail                          |
-| POST   | `/admin/products`                     | Yes           | No (JWT only) | Create product                                |
-| PATCH  | `/admin/products/:id`                 | Yes           | No (JWT only) | Update product                                |
-| POST   | `/admin/products/:productId/variants` | Yes           | No (JWT only) | Create product variant                        |
-| PATCH  | `/admin/variants/:id`                 | Yes           | No (JWT only) | Update product variant                        |
-| POST   | `/admin/products/:productId/images`   | Yes           | No (JWT only) | Create product image                          |
-| PATCH  | `/admin/product-images/:id`           | Yes           | No (JWT only) | Update product image                          |
-| DELETE | `/admin/product-images/:id`           | Yes           | No (JWT only) | Delete product image                          |
-| GET    | `/admin/categories`                   | Yes           | No (JWT only) | Admin category list                           |
-| GET    | `/admin/categories/export/csv`        | Yes           | Yes           | Download categories CSV                       |
-| GET    | `/admin/categories/:id`               | Yes           | No (JWT only) | Admin category detail                         |
-| POST   | `/admin/categories`                   | Yes           | No (JWT only) | Create category                               |
-| PATCH  | `/admin/categories/:id`               | Yes           | No (JWT only) | Update category                               |
-| GET    | `/admin/quote-requests`               | Yes           | No (JWT only) | Admin quote requests list                     |
-| GET    | `/admin/quote-requests/:id`           | Yes           | No (JWT only) | Admin quote request detail                    |
-| PATCH  | `/admin/quote-requests/:id/status`    | Yes           | No (JWT only) | Update quote request status                   |
+| Method | Path                                       | Auth required | Admin only    | Description                                      |
+| ------ | ------------------------------------------ | ------------- | ------------- | ------------------------------------------------ |
+| GET    | `/`                                        | No            | No            | Health-like hello string                         |
+| GET    | `/users`                                   | No            | No            | List users (safe fields)                         |
+| POST   | `/auth/login`                              | No            | No            | Authenticate and get JWT                         |
+| GET    | `/catalog/categories`                      | No            | No            | Public active categories (filtered)              |
+| GET    | `/catalog/products`                        | No            | No            | Public active products list                      |
+| GET    | `/catalog/products/:slug`                  | No            | No            | Public product detail by slug                    |
+| POST   | `/quote-requests`                          | No            | No            | Create quote request                             |
+| GET    | `/admin/dashboard/stats`                   | Yes           | No (JWT only) | Dashboard KPIs                                   |
+| GET    | `/admin/dashboard/stats/export/csv`        | Yes           | Yes           | Download dashboard stats + quote requests CSV    |
+| GET    | `/admin/products`                          | Yes           | No (JWT only) | Admin product list                               |
+| GET    | `/admin/products/export/csv`               | Yes           | Yes           | Download products CSV                            |
+| GET    | `/admin/products/:id`                      | Yes           | No (JWT only) | Admin product detail                             |
+| POST   | `/admin/products`                          | Yes           | No (JWT only) | Create product                                   |
+| PATCH  | `/admin/products/:id`                      | Yes           | No (JWT only) | Update product                                   |
+| DELETE | `/admin/products/:id`                      | Yes           | No (JWT only) | Delete product and related catalog data          |
+| POST   | `/admin/products/:productId/variants`      | Yes           | No (JWT only) | Create product variant                           |
+| POST   | `/admin/products/:productId/variants/bulk` | Yes           | No (JWT only) | Bulk create product variants by size range       |
+| PATCH  | `/admin/variants/:id`                      | Yes           | No (JWT only) | Update product variant                           |
+| DELETE | `/admin/variants/:id`                      | Yes           | No (JWT only) | Delete product variant                           |
+| POST   | `/admin/products/:productId/images`        | Yes           | No (JWT only) | Create product image                             |
+| POST   | `/admin/products/:productId/images/upload` | Yes           | No (JWT only) | Upload product image file via backend Cloudinary |
+| PATCH  | `/admin/product-images/:id`                | Yes           | No (JWT only) | Update product image                             |
+| DELETE | `/admin/product-images/:id`                | Yes           | No (JWT only) | Delete product image                             |
+| GET    | `/admin/categories`                        | Yes           | No (JWT only) | Admin category list                              |
+| GET    | `/admin/categories/export/csv`             | Yes           | Yes           | Download categories CSV                          |
+| GET    | `/admin/categories/:id`                    | Yes           | No (JWT only) | Admin category detail                            |
+| POST   | `/admin/categories`                        | Yes           | No (JWT only) | Create category                                  |
+| PATCH  | `/admin/categories/:id`                    | Yes           | No (JWT only) | Update category                                  |
+| DELETE | `/admin/categories/:id`                    | Yes           | No (JWT only) | Delete category and nested catalog data          |
+| GET    | `/admin/quote-requests`                    | Yes           | No (JWT only) | Admin quote requests list                        |
+| GET    | `/admin/quote-requests/:id`                | Yes           | No (JWT only) | Admin quote request detail                       |
+| PATCH  | `/admin/quote-requests/:id/status`         | Yes           | No (JWT only) | Update quote request status                      |
 
 ## Detailed Endpoints
 
@@ -780,6 +804,43 @@ curl -X PATCH http://localhost:3000/admin/products/prod_1 \
 }
 ```
 
+### DELETE `/admin/products/:id`
+
+- Purpose: Delete a product and explicitly clean related variants/images in a transaction.
+- Auth requirements: JWT required.
+- Params: `id`.
+- Query: None.
+- Request body: None.
+- Response body:
+  - `{ message: "Product deleted successfully.", data: { id, deletedVariants, deletedImages, cloudinaryCleanupPendingPublicIds } }`
+- Error cases:
+  - `401` auth
+  - `404` product not found
+  - `400` product has quote-request references and cannot be deleted
+- Notes:
+  - Service uses explicit transactional cleanup (`variants`, `images`, then `product`).
+  - `cloudinaryCleanupPendingPublicIds` is returned as a hook for future Cloudinary physical asset deletion.
+- Example request:
+
+```bash
+curl -X DELETE http://localhost:3000/admin/products/prod_1 \
+  -H 'Authorization: Bearer <token>'
+```
+
+- Example response:
+
+```json
+{
+  "message": "Product deleted successfully.",
+  "data": {
+    "id": "prod_1",
+    "deletedVariants": true,
+    "deletedImages": true,
+    "cloudinaryCleanupPendingPublicIds": ["catalog/prod_1/front"]
+  }
+}
+```
+
 ### POST `/admin/products/:productId/variants`
 
 - Purpose: Add variant to product.
@@ -817,6 +878,75 @@ curl -X POST http://localhost:3000/admin/products/prod_1/variants \
     "isActive": true,
     "stock": 5,
     "productId": "prod_1"
+  }
+}
+```
+
+### POST `/admin/products/:productId/variants/bulk`
+
+- Purpose: Bulk create variants by shoe-size range for a single product.
+- Auth requirements: JWT required.
+- Params: `productId`.
+- Query: None.
+- Request body:
+  - `startSize: number` (whole or `.5`)
+  - `endSize: number` (whole or `.5`)
+  - `includeHalfSizes: boolean`
+  - `color: string`
+  - `stock?: number` (int >= 0)
+  - `isActive?: boolean`
+- Behavior:
+  - Sizes are generated in ascending order.
+  - `includeHalfSizes=false` => increments by `1` only.
+  - `includeHalfSizes=true` => increments by `0.5`.
+  - Rejects invalid ranges (`startSize > endSize`).
+  - Rejects invalid step values (must be whole or half sizes).
+  - Prevents duplicate variants for the same product + color + size by skipping existing ones.
+  - SKU is not auto-generated; created records keep `sku: null` unless set later via update endpoint.
+- Response body:
+  - `{ message, data: { productId, requestedCount, createdCount, skippedCount, skippedSizes, variants } }`
+- Error cases:
+  - `401` auth
+  - `404` product not found
+  - `400` invalid range or invalid size step
+- Example request:
+
+```bash
+curl -X POST http://localhost:3000/admin/products/prod_1/variants/bulk \
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "startSize": 22,
+    "endSize": 24,
+    "includeHalfSizes": true,
+    "color": "Negro",
+    "stock": 10,
+    "isActive": true
+  }'
+```
+
+- Example response:
+
+```json
+{
+  "message": "Product variants bulk creation completed successfully.",
+  "data": {
+    "productId": "prod_1",
+    "requestedCount": 5,
+    "createdCount": 4,
+    "skippedCount": 1,
+    "skippedSizes": ["23"],
+    "variants": [
+      {
+        "id": "var_10",
+        "size": "22",
+        "color": "Negro",
+        "sku": null,
+        "isActive": true,
+        "stock": 10,
+        "productId": "prod_1"
+      }
+    ]
   }
 }
 ```
@@ -861,6 +991,36 @@ curl -X PATCH http://localhost:3000/admin/variants/var_2 \
 }
 ```
 
+### DELETE `/admin/variants/:id`
+
+- Purpose: Delete a single product variant.
+- Auth requirements: JWT required.
+- Params: `id`.
+- Query: None.
+- Request body: None.
+- Response body:
+  - `{ message: "Product variant deleted successfully.", data: { id } }`
+- Error cases:
+  - `401` auth
+  - `404` variant not found
+- Example request:
+
+```bash
+curl -X DELETE http://localhost:3000/admin/variants/var_2 \
+  -H 'Authorization: Bearer <token>'
+```
+
+- Example response:
+
+```json
+{
+  "message": "Product variant deleted successfully.",
+  "data": {
+    "id": "var_2"
+  }
+}
+```
+
 ### POST `/admin/products/:productId/images`
 
 - Purpose: Add product image.
@@ -897,6 +1057,60 @@ curl -X POST http://localhost:3000/admin/products/prod_1/images \
     "publicId": null,
     "alt": "Side",
     "order": 1,
+    "productId": "prod_1",
+    "createdAt": "...",
+    "updatedAt": "..."
+  }
+}
+```
+
+### POST `/admin/products/:productId/images/upload`
+
+- Purpose: Upload a product image file through backend-managed Cloudinary integration and persist the resulting `ProductImage` row.
+- Auth requirements: JWT required.
+- Params: `productId`.
+- Query: None.
+- Request body:
+  - `multipart/form-data`
+  - required file field: `file` (image only)
+  - optional fields:
+    - `alt?: string`
+    - `order?: number` (int >= 0)
+- Behavior:
+  - Validates product existence.
+  - Validates file type (`jpeg/jpg/png/webp/gif/avif`) and max file size (8MB).
+  - Uploads to Cloudinary folder pattern:
+    - `<CLOUDINARY_FOLDER_ROOT>/<CLOUDINARY_PRODUCTS_FOLDER>/<product-slug>/`
+  - Stores `url`, `secureUrl`, `publicId`, `alt`, `order` in `ProductImage`.
+- Response body:
+  - `{ message: "Product image uploaded successfully.", data: ProductImage }`
+- Error cases:
+  - `401` auth
+  - `404` product not found
+  - `400` invalid file/type/size or invalid metadata fields
+  - `500` Cloudinary upload failure
+- Example request:
+
+```bash
+curl -X POST http://localhost:3000/admin/products/prod_1/images/upload \
+  -H 'Authorization: Bearer <token>' \
+  -F 'file=@/tmp/alpha-front.jpg' \
+  -F 'alt=Front view' \
+  -F 'order=0'
+```
+
+- Example response:
+
+```json
+{
+  "message": "Product image uploaded successfully.",
+  "data": {
+    "id": "img_3",
+    "url": "http://res.cloudinary.com/demo/image/upload/v1/tennjor/products/tenis-alpha/alpha-front.jpg",
+    "secureUrl": "https://res.cloudinary.com/demo/image/upload/v1/tennjor/products/tenis-alpha/alpha-front.jpg",
+    "publicId": "tennjor/products/tenis-alpha/alpha-front",
+    "alt": "Front view",
+    "order": 0,
     "productId": "prod_1",
     "createdAt": "...",
     "updatedAt": "..."
@@ -954,10 +1168,16 @@ curl -X PATCH http://localhost:3000/admin/product-images/img_2 \
 - Query: None.
 - Request body: None.
 - Response body:
-  - `{ message: "Product image deleted successfully.", data: { id, publicId } }`
+  - `{ message: "Product image deleted successfully.", data: { id, publicId, cloudinaryCleanup } }`
 - Error cases:
   - `401` auth
   - `404` image not found
+- Notes:
+  - If `publicId` exists, backend attempts Cloudinary asset deletion before DB delete.
+  - `cloudinaryCleanup` reports the attempt status/result:
+    - `{ attempted: false }` (no publicId)
+    - `{ attempted: true, result: "ok" | "not found" }`
+    - `{ attempted: true, error: "<message>" }` (cleanup failure while DB delete still proceeds)
 - Example request:
 
 ```bash
@@ -972,7 +1192,11 @@ curl -X DELETE http://localhost:3000/admin/product-images/img_2 \
   "message": "Product image deleted successfully.",
   "data": {
     "id": "img_2",
-    "publicId": null
+    "publicId": "tennjor/products/tenis-alpha/front",
+    "cloudinaryCleanup": {
+      "attempted": true,
+      "result": "ok"
+    }
   }
 }
 ```
@@ -1197,6 +1421,44 @@ curl -X PATCH http://localhost:3000/admin/categories/cat_1 \
     "createdAt": "...",
     "updatedAt": "...",
     "_count": { "products": 14 }
+  }
+}
+```
+
+### DELETE `/admin/categories/:id`
+
+- Purpose: Delete category and nested catalog data (products, variants, images) in one transaction.
+- Auth requirements: JWT required.
+- Params: `id`.
+- Query: None.
+- Request body: None.
+- Response body:
+  - `{ message: "Category deleted successfully.", data: { id, deletedProductsCount, deletedVariants, deletedImages, cloudinaryCleanupPendingPublicIds } }`
+- Error cases:
+  - `401` auth
+  - `404` category not found
+  - `400` one or more products in the category are referenced by quote requests
+- Notes:
+  - Service uses explicit transactional cleanup.
+  - Cloudinary assets are not physically removed yet; returned public IDs are a cleanup hook.
+- Example request:
+
+```bash
+curl -X DELETE http://localhost:3000/admin/categories/cat_1 \
+  -H 'Authorization: Bearer <token>'
+```
+
+- Example response:
+
+```json
+{
+  "message": "Category deleted successfully.",
+  "data": {
+    "id": "cat_1",
+    "deletedProductsCount": 12,
+    "deletedVariants": true,
+    "deletedImages": true,
+    "cloudinaryCleanupPendingPublicIds": ["catalog/prod_1/front"]
   }
 }
 ```

@@ -1,5 +1,10 @@
 import type {
   AdminCategoriesListResponse,
+  BulkCreateVariantsPayload,
+  BulkCreateVariantsResponse,
+  DeleteProductImageResponse,
+  DeleteProductResponse,
+  DeleteVariantResponse,
   CreateProductVariantPayload,
   CreateAdminProductPayload,
   CreateAdminProductResponse,
@@ -7,6 +12,8 @@ import type {
   ProductAdminListQuery,
   ProductAdminListResponse,
   ProductVariantResponse,
+  UploadProductImagePayload,
+  UploadProductImageResponse,
   UpdateProductVariantPayload,
   UpdateAdminProductPayload,
   UpdateAdminProductResponse,
@@ -73,5 +80,43 @@ export const productsService = {
         body: payload,
       },
     );
+  },
+  deleteVariant(variantId: string) {
+    return apiClient.request<DeleteVariantResponse>(`/admin/variants/${variantId}`, {
+      method: "DELETE",
+    });
+  },
+  bulkCreateVariants(productId: string, payload: BulkCreateVariantsPayload) {
+    return apiClient.request<BulkCreateVariantsResponse, BulkCreateVariantsPayload>(
+      `/admin/products/${productId}/variants/bulk`,
+      {
+        method: "POST",
+        body: payload,
+      },
+    );
+  },
+  uploadProductImage(productId: string, payload: UploadProductImagePayload) {
+    const formData = new FormData();
+    formData.append("file", payload.file);
+    if (payload.alt) formData.append("alt", payload.alt);
+    if (typeof payload.order === "number") formData.append("order", String(payload.order));
+
+    return apiClient.request<UploadProductImageResponse, FormData>(
+      `/admin/products/${productId}/images/upload`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+  },
+  deleteProductImage(imageId: string) {
+    return apiClient.request<DeleteProductImageResponse>(`/admin/product-images/${imageId}`, {
+      method: "DELETE",
+    });
+  },
+  deleteProduct(productId: string) {
+    return apiClient.request<DeleteProductResponse>(`/admin/products/${productId}`, {
+      method: "DELETE",
+    });
   },
 };

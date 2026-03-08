@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, RotateCw } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
@@ -20,6 +21,7 @@ function formatDate(date: string) {
 }
 
 export function ProductEditView({ productId }: ProductEditViewProps) {
+  const router = useRouter();
   const {
     product,
     categories,
@@ -28,6 +30,9 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
     error,
     successMessage,
     saveProduct,
+    uploadProductImage,
+    deleteProductImage,
+    deleteProduct,
     refetch,
   } = useProductEdit(productId);
 
@@ -72,17 +77,37 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
           <ArrowLeft className="size-4" />
           Back to products
         </Link>
-        <Button
-          variant="secondary"
-          iconLeft={<RotateCw className="size-4" />}
-          onClick={() => {
-            refetch().catch(() => {
-              // Refetch errors are handled in hook state.
-            });
-          }}
-        >
-          Reload
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            disabled={isSaving}
+            onClick={() => {
+              const accepted = window.confirm(
+                "Delete this product? It cannot be undone and may fail if linked to quote requests.",
+              );
+              if (!accepted) return;
+
+              deleteProduct()
+                .then(() => router.replace("/admin/products"))
+                .catch(() => {
+                  // Errors are handled in hook state.
+                });
+            }}
+          >
+            Delete
+          </Button>
+          <Button
+            variant="secondary"
+            iconLeft={<RotateCw className="size-4" />}
+            onClick={() => {
+              refetch().catch(() => {
+                // Refetch errors are handled in hook state.
+              });
+            }}
+          >
+            Reload
+          </Button>
+        </div>
       </div>
 
       <PageHeader
@@ -152,7 +177,21 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
           </Card>
         </div>
 
-        <ProductImagesPanel images={product.images} productName={product.name} />
+        <ProductImagesPanel
+          images={product.images}
+          productName={product.name}
+          isSaving={isSaving}
+          onUploadImage={(payload) => {
+            uploadProductImage(payload).catch(() => {
+              // Errors are handled in hook state.
+            });
+          }}
+          onDeleteImage={(imageId) => {
+            deleteProductImage(imageId).catch(() => {
+              // Errors are handled in hook state.
+            });
+          }}
+        />
       </div>
     </section>
   );

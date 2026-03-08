@@ -11,6 +11,7 @@ type ProductVariantsTableProps = {
   isSaving: boolean;
   onToggleStatus: (variant: ProductAdminVariant) => void;
   onUpdate: (variantId: string, payload: UpdateProductVariantPayload) => void;
+  onDelete: (variantId: string) => void;
 };
 
 type VariantDraft = {
@@ -26,6 +27,7 @@ export function ProductVariantsTable({
   isSaving,
   onToggleStatus,
   onUpdate,
+  onDelete,
 }: ProductVariantsTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState<VariantDraft | null>(null);
@@ -164,6 +166,18 @@ export function ProductVariantsTable({
                           onClick={() => onToggleStatus(variant)}
                         >
                           {variant.isActive ? "Deactivate" : "Activate"}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          disabled={isSaving}
+                          onClick={() => {
+                            const accepted = window.confirm(
+                              "Delete this variant? This action cannot be undone.",
+                            );
+                            if (accepted) onDelete(variant.id);
+                          }}
+                        >
+                          Delete
                         </Button>
                       </>
                     )}

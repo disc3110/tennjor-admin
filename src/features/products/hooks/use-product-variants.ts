@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { productsService } from "@/src/features/products/services/products-service";
 import type {
+  BulkCreateVariantsPayload,
   CreateProductVariantPayload,
   ProductAdminDetail,
   ProductAdminVariant,
@@ -33,6 +34,7 @@ type UseProductVariantsResult = {
   toggleVariantActive: (variant: ProductAdminVariant) => Promise<void>;
   previewBulkSizes: (input: BulkCreateInput) => string[];
   createVariantsFromRange: (input: BulkCreateInput) => Promise<void>;
+  deleteVariant: (variantId: string) => Promise<void>;
 };
 
 export function useProductVariants(productId: string): UseProductVariantsResult {
@@ -134,18 +136,20 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
       setSuccessMessage(null);
 
       try {
-        // Bulk endpoint is not documented; fallback to documented single-create endpoint.
-        for (const size of sizes) {
-          await productsService.createVariant(productId, {
-            size,
-            color: input.color,
-            stock: input.stock,
-            isActive: input.isActive,
-          });
-        }
+        const payload: BulkCreateVariantsPayload = {
+          startSize: input.startSize,
+          endSize: input.endSize,
+          includeHalfSizes: input.includeHalfSizes,
+          color: input.color,
+          stock: input.stock,
+          isActive: input.isActive,
+        };
+        const response = await productsService.bulkCreateVariants(productId, payload);
 
         await loadProduct();
-        setSuccessMessage(`${sizes.length} variant(s) created successfully.`);
+        setSuccessMessage(
+          `${response.data.createdCount} created, ${response.data.skippedCount} skipped (${response.data.skippedSizes.join(", ") || "none"}).`,
+        );
       } catch {
         setError("Failed during range variant creation.");
       } finally {
@@ -153,6 +157,32 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
       }
     },
     [loadProduct, productId],
+  );
+
+  const deleteVariant = useCallback(
+    async (variantId: string) => {
+      setIsSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      try {
+        await productsService.deleteVariant(variantId);
+        setProduct((current) =>
+          current
+            ? {
+                ...current,
+                variants: current.variants.filter((variant) => variant.id !== variantId),
+              }
+            : current,
+        );
+        setSuccessMessage("Variant deleted successfully.");
+      } catch {
+        setError("Unable to delete variant.");
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [],
   );
 
   useEffect(() => {
@@ -175,5 +205,6 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
     toggleVariantActive,
     previewBulkSizes,
     createVariantsFromRange,
+    deleteVariant,
   };
 }

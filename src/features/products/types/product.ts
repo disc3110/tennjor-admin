@@ -16,6 +16,7 @@ export type ProductAdminImage = {
 export type ProductAdminImageDetail = ProductAdminImage & {
   createdAt: string;
   updatedAt: string;
+  productId?: string;
 };
 
 export type ProductAdminVariant = {
@@ -47,6 +48,38 @@ export type ProductVariantResponse = {
   message: string;
   data: ProductAdminVariant & {
     productId: string;
+  };
+};
+
+export type BulkCreateVariantsPayload = {
+  startSize: number;
+  endSize: number;
+  includeHalfSizes: boolean;
+  color: string;
+  stock?: number;
+  isActive?: boolean;
+};
+
+export type BulkCreateVariantsResponse = {
+  message: string;
+  data: {
+    productId: string;
+    requestedCount: number;
+    createdCount: number;
+    skippedCount: number;
+    skippedSizes: string[];
+    variants: Array<
+      ProductAdminVariant & {
+        productId: string;
+      }
+    >;
+  };
+};
+
+export type DeleteVariantResponse = {
+  message: string;
+  data: {
+    id: string;
   };
 };
 
@@ -115,6 +148,40 @@ export type CreateAdminProductResponse = {
 
 export type ProductAdminDetailResponse = {
   data: ProductAdminDetail;
+};
+
+export type UploadProductImagePayload = {
+  file: File;
+  alt?: string;
+  order?: number;
+};
+
+export type UploadProductImageResponse = {
+  message: string;
+  data: ProductAdminImageDetail;
+};
+
+export type DeleteProductImageResponse = {
+  message: string;
+  data: {
+    id: string;
+    publicId: string | null;
+    cloudinaryCleanup: {
+      attempted: boolean;
+      result?: string;
+      error?: string;
+    };
+  };
+};
+
+export type DeleteProductResponse = {
+  message: string;
+  data: {
+    id: string;
+    deletedVariants: boolean;
+    deletedImages: boolean;
+    cloudinaryCleanupPendingPublicIds: string[];
+  };
 };
 
 export type CategoryAdmin = {

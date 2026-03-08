@@ -27,6 +27,7 @@ export function ProductVariantsView({ productId }: ProductVariantsViewProps) {
     updateVariant,
     toggleVariantActive,
     createVariantsFromRange,
+    deleteVariant,
   } = useProductVariants(productId);
 
   if (isLoading) {
@@ -105,14 +106,12 @@ export function ProductVariantsView({ productId }: ProductVariantsViewProps) {
                   // Errors are handled in hook state.
                 });
               }}
+              onDelete={(variantId) => {
+                deleteVariant(variantId).catch(() => {
+                  // Errors are handled in hook state.
+                });
+              }}
             />
-          </Card>
-
-          <Card>
-            <p className="text-xs text-slate-500">
-              TODO: Delete action is not available because the backend contract does not document
-              a variant delete endpoint.
-            </p>
           </Card>
         </div>
 

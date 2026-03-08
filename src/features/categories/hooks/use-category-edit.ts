@@ -14,6 +14,7 @@ type UseCategoryEditResult = {
   error: string | null;
   successMessage: string | null;
   saveCategory: (payload: UpdateCategoryPayload) => Promise<void>;
+  deleteCategory: () => Promise<void>;
   refetch: () => Promise<void>;
 };
 
@@ -64,6 +65,28 @@ export function useCategoryEdit(categoryId: string): UseCategoryEditResult {
     [categoryId],
   );
 
+  const deleteCategory = useCallback(async () => {
+    setIsSaving(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      const response = await categoriesService.delete(categoryId);
+      if (response.data.cloudinaryCleanupPendingPublicIds.length > 0) {
+        setSuccessMessage(
+          `Category deleted. Pending cloud cleanup: ${response.data.cloudinaryCleanupPendingPublicIds.length} image(s).`,
+        );
+      } else {
+        setSuccessMessage("Category deleted successfully.");
+      }
+    } catch {
+      setError("Unable to delete category. It may contain products linked to quote requests.");
+      throw new Error("delete_failed");
+    } finally {
+      setIsSaving(false);
+    }
+  }, [categoryId]);
+
   useEffect(() => {
     fetchCategory().catch(() => {
       // Request errors are handled in hook state.
@@ -77,6 +100,7 @@ export function useCategoryEdit(categoryId: string): UseCategoryEditResult {
     error,
     successMessage,
     saveCategory,
+    deleteCategory,
     refetch: fetchCategory,
   };
 }

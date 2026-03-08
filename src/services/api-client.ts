@@ -23,26 +23,36 @@ class ApiClient {
   ): Promise<TResponse> {
     const { method = "GET", body, headers, requireAuth = true } = options;
     const token = requireAuth ? loadAccessToken() : null;
+    const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
 
     const response = await fetch(`${this.baseUrl}${path}`, {
       method,
       headers: {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
-      body: body ? JSON.stringify(body) : undefined,
+      body: body
+        ? isFormData
+          ? (body as BodyInit)
+          : JSON.stringify(body)
+        : undefined,
     });
 
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status}`);
     }
 
-    if (response.status === 204) {
+    if (response.status === 204 || response.headers.get("content-length") === "0") {
       return undefined as TResponse;
     }
 
-    return (await response.json()) as TResponse;
+    const contentType = response.headers.get("content-type") ?? "";
+    if (contentType.includes("application/json")) {
+      return (await response.json()) as TResponse;
+    }
+
+    return (await response.text()) as TResponse;
   }
 }
 
