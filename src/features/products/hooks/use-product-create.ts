@@ -6,7 +6,14 @@ import type {
   CategoryAdmin,
   CreateAdminProductPayload,
   ProductAdminDetail,
+  UploadProductImagePayload,
 } from "@/src/features/products/types/product";
+
+type InitialImageInput = {
+  file: File;
+  alt?: string;
+  order?: number;
+};
 
 type UseProductCreateResult = {
   categories: CategoryAdmin[];
@@ -15,7 +22,10 @@ type UseProductCreateResult = {
   isSaving: boolean;
   error: string | null;
   successMessage: string | null;
-  createProduct: (payload: CreateAdminProductPayload) => Promise<ProductAdminDetail | null>;
+  createProductWithOptionalImage: (
+    payload: CreateAdminProductPayload,
+    initialImage?: InitialImageInput,
+  ) => Promise<{ product: ProductAdminDetail | null; imageUploadFailed: boolean }>;
   refetch: () => Promise<void>;
 };
 
@@ -41,23 +51,48 @@ export function useProductCreate(): UseProductCreateResult {
     }
   }, []);
 
-  const createProduct = useCallback(async (payload: CreateAdminProductPayload) => {
-    setIsSaving(true);
-    setError(null);
-    setSuccessMessage(null);
+  const createProductWithOptionalImage = useCallback(
+    async (payload: CreateAdminProductPayload, initialImage?: InitialImageInput) => {
+      setIsSaving(true);
+      setError(null);
+      setSuccessMessage(null);
 
-    try {
-      const response = await productsService.create(payload);
-      setCreatedProduct(response.data);
-      setSuccessMessage(response.message);
-      return response.data;
-    } catch {
-      setError("Unable to create product.");
-      return null;
-    } finally {
-      setIsSaving(false);
-    }
-  }, []);
+      try {
+        const createResponse = await productsService.create(payload);
+        const product = createResponse.data;
+        setCreatedProduct(product);
+
+        let imageUploadFailed = false;
+        if (initialImage) {
+          const uploadPayload: UploadProductImagePayload = {
+            file: initialImage.file,
+            alt: initialImage.alt,
+            order: initialImage.order,
+          };
+
+          try {
+            await productsService.uploadProductImage(product.id, uploadPayload);
+            setSuccessMessage("Product and initial image created successfully.");
+          } catch {
+            imageUploadFailed = true;
+            setSuccessMessage(
+              "Product created successfully, but initial image upload failed. You can retry on the edit page.",
+            );
+          }
+        } else {
+          setSuccessMessage(createResponse.message);
+        }
+
+        return { product, imageUploadFailed };
+      } catch {
+        setError("Unable to create product.");
+        return { product: null, imageUploadFailed: false };
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     fetchCategories().catch(() => {
@@ -72,7 +107,7 @@ export function useProductCreate(): UseProductCreateResult {
     isSaving,
     error,
     successMessage,
-    createProduct,
+    createProductWithOptionalImage,
     refetch: fetchCategories,
   };
 }

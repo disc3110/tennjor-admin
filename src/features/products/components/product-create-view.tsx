@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, RotateCw } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
+import { Input } from "@/src/components/ui/input";
 import { PageHeader } from "@/src/components/ui/page-header";
 import { ProductForm, type ProductFormValues } from "@/src/features/products/components/product-form";
 import { useProductCreate } from "@/src/features/products/hooks/use-product-create";
@@ -12,8 +14,18 @@ import type { CreateAdminProductPayload } from "@/src/features/products/types/pr
 
 export function ProductCreateView() {
   const router = useRouter();
-  const { categories, isLoading, isSaving, error, successMessage, createProduct, refetch } =
-    useProductCreate();
+  const {
+    categories,
+    isLoading,
+    isSaving,
+    error,
+    successMessage,
+    createProductWithOptionalImage,
+    refetch,
+  } = useProductCreate();
+  const [initialImageFile, setInitialImageFile] = useState<File | null>(null);
+  const [initialImageAlt, setInitialImageAlt] = useState("");
+  const [initialImageOrder, setInitialImageOrder] = useState("0");
 
   const handleSubmit = async (values: ProductFormValues) => {
     const payload: CreateAdminProductPayload = {
@@ -24,8 +36,27 @@ export function ProductCreateView() {
       isActive: values.isActive,
     };
 
-    const product = await createProduct(payload);
+    const initialImage = initialImageFile
+      ? {
+          file: initialImageFile,
+          alt: initialImageAlt.trim() || undefined,
+          order:
+            initialImageOrder.trim().length > 0 && !Number.isNaN(Number(initialImageOrder))
+              ? Number(initialImageOrder)
+              : undefined,
+        }
+      : undefined;
+
+    const { product, imageUploadFailed } = await createProductWithOptionalImage(
+      payload,
+      initialImage,
+    );
     if (product) {
+      if (imageUploadFailed) {
+        window.alert(
+          "Product created, but initial image upload failed. You can retry from the product edit page.",
+        );
+      }
       router.replace(`/admin/products/${product.id}`);
     }
   };
@@ -64,7 +95,7 @@ export function ProductCreateView() {
 
       <PageHeader
         title="Create Product"
-        subtitle="Create the base product first, then manage images and variants."
+        subtitle="Create the base product and optionally upload one initial image."
       />
 
       {error ? (
@@ -97,15 +128,38 @@ export function ProductCreateView() {
         </div>
 
         <Card>
-          <h2 className="text-lg font-semibold text-slate-900">Next Steps</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Initial Image (Optional)</h2>
           <p className="mt-2 text-sm text-slate-600">
-            Images and variants are supported by the create contract, but this first create flow
-            is intentionally limited to base product fields for a simpler admin experience.
+            If selected, the image will be uploaded right after product creation using the backend
+            upload route.
           </p>
-          <p className="mt-3 text-xs text-slate-500">
-            TODO: Add optional inline image/variant creation when the UX for nested inputs is
-            finalized.
-          </p>
+
+          <div className="mt-4 space-y-3">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(event) => setInitialImageFile(event.target.files?.[0] ?? null)}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+              disabled={isSaving}
+            />
+            <p className="text-xs text-slate-500">
+              {initialImageFile ? `Selected: ${initialImageFile.name}` : "No file selected"}
+            </p>
+            <Input
+              placeholder="Alt text (optional)"
+              value={initialImageAlt}
+              onChange={(event) => setInitialImageAlt(event.target.value)}
+              disabled={isSaving}
+            />
+            <Input
+              type="number"
+              min={0}
+              placeholder="Order (optional)"
+              value={initialImageOrder}
+              onChange={(event) => setInitialImageOrder(event.target.value)}
+              disabled={isSaving}
+            />
+          </div>
         </Card>
       </div>
     </section>
