@@ -1,10 +1,13 @@
 import type {
   AdminCategoriesListResponse,
+  CreateProductVariantPayload,
   CreateAdminProductPayload,
   CreateAdminProductResponse,
   ProductAdminDetailResponse,
   ProductAdminListQuery,
   ProductAdminListResponse,
+  ProductVariantResponse,
+  UpdateProductVariantPayload,
   UpdateAdminProductPayload,
   UpdateAdminProductResponse,
 } from "@/src/features/products/types/product";
@@ -47,6 +50,24 @@ export const productsService = {
   update(id: string, payload: UpdateAdminProductPayload) {
     return apiClient.request<UpdateAdminProductResponse, UpdateAdminProductPayload>(
       `/admin/products/${id}`,
+      {
+        method: "PATCH",
+        body: payload,
+      },
+    );
+  },
+  createVariant(productId: string, payload: CreateProductVariantPayload) {
+    return apiClient.request<ProductVariantResponse, CreateProductVariantPayload>(
+      `/admin/products/${productId}/variants`,
+      {
+        method: "POST",
+        body: payload,
+      },
+    );
+  },
+  updateVariant(variantId: string, payload: UpdateProductVariantPayload) {
+    return apiClient.request<ProductVariantResponse, UpdateProductVariantPayload>(
+      `/admin/variants/${variantId}`,
       {
         method: "PATCH",
         body: payload,

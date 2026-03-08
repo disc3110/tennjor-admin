@@ -121,7 +121,15 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
           />
 
           <Card>
-            <h2 className="text-lg font-semibold text-slate-900">Variants Summary</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">Variants Summary</h2>
+              <Link
+                href={`/admin/products/${product.id}/variants`}
+                className="text-sm font-medium text-slate-600 underline-offset-4 hover:text-slate-900 hover:underline"
+              >
+                Manage Variants
+              </Link>
+            </div>
             {product.variants.length === 0 ? (
               <p className="mt-2 text-sm text-slate-500">No variants configured for this product.</p>
             ) : (

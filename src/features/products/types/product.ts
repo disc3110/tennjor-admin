@@ -27,6 +27,29 @@ export type ProductAdminVariant = {
   stock: number;
 };
 
+export type CreateProductVariantPayload = {
+  size: string;
+  color: string;
+  sku?: string;
+  isActive?: boolean;
+  stock?: number;
+};
+
+export type UpdateProductVariantPayload = {
+  size?: string;
+  color?: string;
+  sku?: string;
+  isActive?: boolean;
+  stock?: number;
+};
+
+export type ProductVariantResponse = {
+  message: string;
+  data: ProductAdminVariant & {
+    productId: string;
+  };
+};
+
 export type ProductAdmin = {
   id: string;
   name: string;
