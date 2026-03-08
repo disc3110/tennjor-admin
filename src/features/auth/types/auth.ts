@@ -7,7 +7,7 @@ export type AuthUser = {
   id: string;
   email: string;
   name: string;
-  role: "ADMIN" | "USER";
+  role: string;
 };
 
 export type LoginResponse = {
