@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { PageHeader } from "@/src/components/ui/page-header";
+import { QuoteQuickActionsCard } from "@/src/features/quotes/components/quote-quick-actions-card";
 import { QuoteStatusBadge } from "@/src/features/quotes/components/quote-status-badge";
 import { useQuoteDetail } from "@/src/features/quotes/hooks/use-quote-detail";
 import type { QuoteRequestStatus } from "@/src/features/quotes/types/quote";
@@ -143,6 +144,8 @@ export function QuoteDetailView({ quoteId }: QuoteDetailViewProps) {
               </div>
             ) : null}
           </Card>
+
+          <QuoteQuickActionsCard quote={quote} />
 
           <Card className="space-y-4">
             <h2 className="text-lg font-semibold text-slate-900">Status & Internal Notes</h2>
