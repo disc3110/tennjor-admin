@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Shapes, LogOut, X } from "lucide-react";
+import { LayoutDashboard, Package, Shapes, MessageSquareQuote, LogOut, X } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { Button } from "@/src/components/ui/button";
 
@@ -16,6 +16,7 @@ const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Categories", href: "/admin/categories", icon: Shapes },
+  { label: "Quotes", href: "/admin/quotes", icon: MessageSquareQuote },
 ] as const;
 
 export function AdminSidebar({ isOpen, onClose, onSignOut }: AdminSidebarProps) {
