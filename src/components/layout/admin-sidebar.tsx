@@ -9,6 +9,7 @@ import { Button } from "@/src/components/ui/button";
 type AdminSidebarProps = {
   isOpen: boolean;
   onClose: () => void;
+  onSignOut: () => void;
 };
 
 const navItems = [
@@ -17,7 +18,7 @@ const navItems = [
   { label: "Categories", href: "/admin/categories", icon: Shapes },
 ] as const;
 
-export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
+export function AdminSidebar({ isOpen, onClose, onSignOut }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -78,7 +79,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           })}
         </nav>
 
-        <Button variant="ghost" className="justify-start gap-3 text-slate-600">
+        <Button variant="ghost" className="justify-start gap-3 text-slate-600" onClick={onSignOut}>
           <LogOut className="size-4" />
           Logout
         </Button>

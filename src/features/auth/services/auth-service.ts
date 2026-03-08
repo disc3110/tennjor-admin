@@ -6,6 +6,7 @@ export const authService = {
     return apiClient.request<LoginResponse, LoginPayload>("/auth/login", {
       method: "POST",
       body: payload,
+      requireAuth: false,
     });
   },
 };

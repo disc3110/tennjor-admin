@@ -2,19 +2,34 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Lock, Mail } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
+import { useAuth } from "@/src/features/auth/context/auth-context";
 
 export function LoginForm() {
+  const router = useRouter();
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Placeholder only: real auth flow will be implemented later.
-    console.info("Login placeholder", { email, passwordLength: password.length });
+    setErrorMessage(null);
+    setIsSubmitting(true);
+
+    try {
+      await signIn({ email, password });
+      router.replace("/admin");
+    } catch {
+      setErrorMessage("Invalid credentials or API unavailable.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -40,6 +55,7 @@ export function LoginForm() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               className="pl-10"
+              autoComplete="email"
               required
             />
           </div>
@@ -55,13 +71,16 @@ export function LoginForm() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="pl-10"
+              autoComplete="current-password"
               required
             />
           </div>
         </label>
 
-        <Button type="submit" className="mt-2 h-11 w-full">
-          Sign in
+        {errorMessage ? <p className="text-sm text-red-600">{errorMessage}</p> : null}
+
+        <Button type="submit" className="mt-2 h-11 w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Signing in..." : "Sign in"}
         </Button>
       </form>
     </Card>
