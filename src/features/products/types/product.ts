@@ -13,6 +13,11 @@ export type ProductAdminImage = {
   order: number;
 };
 
+export type ProductAdminImageDetail = ProductAdminImage & {
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type ProductAdminVariant = {
   id: string;
   size: string;
@@ -33,6 +38,10 @@ export type ProductAdmin = {
   category: ProductAdminCategory;
   images: ProductAdminImage[];
   variants: ProductAdminVariant[];
+};
+
+export type ProductAdminDetail = Omit<ProductAdmin, "images"> & {
+  images: ProductAdminImageDetail[];
 };
 
 export type ProductAdminListMeta = {
@@ -65,5 +74,27 @@ export type UpdateAdminProductPayload = {
 
 export type UpdateAdminProductResponse = {
   message: string;
-  data: ProductAdmin;
+  data: ProductAdminDetail;
+};
+
+export type ProductAdminDetailResponse = {
+  data: ProductAdminDetail;
+};
+
+export type CategoryAdmin = {
+  id: string;
+  name: string;
+  slug: string;
+  isActive: boolean;
+  imageWebUrl: string | null;
+  imageMobileUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _count: {
+    products: number;
+  };
+};
+
+export type AdminCategoriesListResponse = {
+  data: CategoryAdmin[];
 };

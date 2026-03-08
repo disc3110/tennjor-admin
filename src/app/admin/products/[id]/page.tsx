@@ -1,4 +1,4 @@
-import { ProductEditPlaceholderView } from "@/src/features/products/components/product-edit-placeholder-view";
+import { ProductEditView } from "@/src/features/products/components/product-edit-view";
 
 type AdminProductEditPageProps = {
   params: Promise<{ id: string }>;
@@ -6,5 +6,5 @@ type AdminProductEditPageProps = {
 
 export default async function AdminProductEditPage({ params }: AdminProductEditPageProps) {
   const { id } = await params;
-  return <ProductEditPlaceholderView productId={id} />;
+  return <ProductEditView productId={id} />;
 }

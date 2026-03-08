@@ -1,4 +1,6 @@
 import type {
+  AdminCategoriesListResponse,
+  ProductAdminDetailResponse,
   ProductAdminListQuery,
   ProductAdminListResponse,
   UpdateAdminProductPayload,
@@ -24,6 +26,12 @@ function toQueryString(query: ProductAdminListQuery) {
 export const productsService = {
   list(query: ProductAdminListQuery = {}) {
     return apiClient.request<ProductAdminListResponse>(`/admin/products${toQueryString(query)}`);
+  },
+  getById(id: string) {
+    return apiClient.request<ProductAdminDetailResponse>(`/admin/products/${id}`);
+  },
+  listCategories() {
+    return apiClient.request<AdminCategoriesListResponse>("/admin/categories");
   },
   update(id: string, payload: UpdateAdminProductPayload) {
     return apiClient.request<UpdateAdminProductResponse, UpdateAdminProductPayload>(
