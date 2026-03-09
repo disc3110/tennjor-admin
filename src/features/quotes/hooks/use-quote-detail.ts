@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@/src/features/auth/context/auth-context";
 import { quotesService } from "@/src/features/quotes/services/quotes-service";
 import type {
   AdminQuoteRequestDetail,
@@ -19,6 +20,7 @@ type UseQuoteDetailResult = {
 };
 
 export function useQuoteDetail(id: string): UseQuoteDetailResult {
+  const { user } = useAuth();
   const [quote, setQuote] = useState<AdminQuoteRequestDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -46,7 +48,13 @@ export function useQuoteDetail(id: string): UseQuoteDetailResult {
       setSuccessMessage(null);
 
       try {
-        const response = await quotesService.updateStatus(id, payload);
+        const actorName = user?.name?.trim() || user?.email?.trim() || "Admin";
+        const trimmedNote = payload.internalNotes?.trim();
+        const formattedPayload = trimmedNote
+          ? { ...payload, internalNotes: `${actorName}: ${trimmedNote}` }
+          : { status: payload.status };
+
+        const response = await quotesService.updateStatus(id, formattedPayload);
         setQuote(response.data);
         setSuccessMessage(response.message);
       } catch {
@@ -55,7 +63,7 @@ export function useQuoteDetail(id: string): UseQuoteDetailResult {
         setIsSaving(false);
       }
     },
-    [id],
+    [id, user?.email, user?.name],
   );
 
   useEffect(() => {
