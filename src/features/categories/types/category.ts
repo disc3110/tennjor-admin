@@ -90,3 +90,22 @@ export type DeleteCategoryResponse = {
     cloudinaryCleanupPendingPublicIds: string[];
   };
 };
+
+export type CategoryImageUploadSlot = "web" | "mobile";
+
+export type CategoryImageUploadResponse = {
+  message: string;
+  data: {
+    category: CategoryAdmin;
+    uploadedAsset: {
+      url: string;
+      secureUrl: string;
+      publicId: string;
+    };
+    previousAssetCleanup: {
+      attempted: boolean;
+      result?: string;
+      error?: string;
+    };
+  };
+};

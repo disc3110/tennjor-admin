@@ -2,6 +2,7 @@ import type {
   AdminCategoriesListResponse,
   CategoryDetailResponse,
   CategoryListQuery,
+  CategoryImageUploadResponse,
   CreateCategoryPayload,
   CreateCategoryResponse,
   DeleteCategoryResponse,
@@ -50,5 +51,27 @@ export const categoriesService = {
     return apiClient.request<DeleteCategoryResponse>(`/admin/categories/${id}`, {
       method: "DELETE",
     });
+  },
+  uploadWebImage(id: string, file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return apiClient.request<CategoryImageUploadResponse, FormData>(
+      `/admin/categories/${id}/images/web/upload`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+  },
+  uploadMobileImage(id: string, file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return apiClient.request<CategoryImageUploadResponse, FormData>(
+      `/admin/categories/${id}/images/mobile/upload`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
   },
 };

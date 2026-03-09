@@ -11,6 +11,11 @@ import { PageHeader } from "@/src/components/ui/page-header";
 import { ProductForm, type ProductFormValues } from "@/src/features/products/components/product-form";
 import { useProductCreate } from "@/src/features/products/hooks/use-product-create";
 import type { CreateAdminProductPayload } from "@/src/features/products/types/product";
+import {
+  mapPriorityToOrder,
+  productImagePriorityOptions,
+  type ProductImagePriority,
+} from "@/src/features/products/utils/image-priority";
 
 export function ProductCreateView() {
   const router = useRouter();
@@ -25,7 +30,7 @@ export function ProductCreateView() {
   } = useProductCreate();
   const [initialImageFile, setInitialImageFile] = useState<File | null>(null);
   const [initialImageAlt, setInitialImageAlt] = useState("");
-  const [initialImageOrder, setInitialImageOrder] = useState("0");
+  const [initialImagePriority, setInitialImagePriority] = useState<ProductImagePriority>("cover");
 
   const handleSubmit = async (values: ProductFormValues) => {
     const payload: CreateAdminProductPayload = {
@@ -40,10 +45,7 @@ export function ProductCreateView() {
       ? {
           file: initialImageFile,
           alt: initialImageAlt.trim() || undefined,
-          order:
-            initialImageOrder.trim().length > 0 && !Number.isNaN(Number(initialImageOrder))
-              ? Number(initialImageOrder)
-              : undefined,
+          order: mapPriorityToOrder(initialImagePriority, []),
         }
       : undefined;
 
@@ -151,14 +153,20 @@ export function ProductCreateView() {
               onChange={(event) => setInitialImageAlt(event.target.value)}
               disabled={isSaving}
             />
-            <Input
-              type="number"
-              min={0}
-              placeholder="Order (optional)"
-              value={initialImageOrder}
-              onChange={(event) => setInitialImageOrder(event.target.value)}
+            <select
+              value={initialImagePriority}
+              onChange={(event) =>
+                setInitialImagePriority(event.target.value as ProductImagePriority)
+              }
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
               disabled={isSaving}
-            />
+            >
+              {productImagePriorityOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
         </Card>
       </div>

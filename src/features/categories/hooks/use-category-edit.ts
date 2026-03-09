@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { categoriesService } from "@/src/features/categories/services/categories-service";
 import type {
+  CategoryImageUploadSlot,
   CategoryWithProducts,
   UpdateCategoryPayload,
 } from "@/src/features/categories/types/category";
@@ -14,6 +15,7 @@ type UseCategoryEditResult = {
   error: string | null;
   successMessage: string | null;
   saveCategory: (payload: UpdateCategoryPayload) => Promise<void>;
+  uploadCategoryImage: (slot: CategoryImageUploadSlot, file: File) => Promise<void>;
   deleteCategory: () => Promise<void>;
   refetch: () => Promise<void>;
 };
@@ -87,6 +89,43 @@ export function useCategoryEdit(categoryId: string): UseCategoryEditResult {
     }
   }, [categoryId]);
 
+  const uploadCategoryImage = useCallback(
+    async (slot: CategoryImageUploadSlot, file: File) => {
+      setIsSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      try {
+        const response =
+          slot === "web"
+            ? await categoriesService.uploadWebImage(categoryId, file)
+            : await categoriesService.uploadMobileImage(categoryId, file);
+
+        setCategory((previous) =>
+          previous
+            ? {
+                ...previous,
+                ...response.data.category,
+              }
+            : null,
+        );
+
+        if (response.data.previousAssetCleanup.error) {
+          setSuccessMessage(
+            `${response.message} Cleanup warning: ${response.data.previousAssetCleanup.error}`,
+          );
+        } else {
+          setSuccessMessage(response.message);
+        }
+      } catch {
+        setError("Unable to upload category image.");
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [categoryId],
+  );
+
   useEffect(() => {
     fetchCategory().catch(() => {
       // Request errors are handled in hook state.
@@ -100,6 +139,7 @@ export function useCategoryEdit(categoryId: string): UseCategoryEditResult {
     error,
     successMessage,
     saveCategory,
+    uploadCategoryImage,
     deleteCategory,
     refetch: fetchCategory,
   };

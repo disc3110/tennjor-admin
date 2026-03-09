@@ -18,6 +18,7 @@ type UseProductEditResult = {
   successMessage: string | null;
   saveProduct: (payload: UpdateAdminProductPayload) => Promise<void>;
   uploadProductImage: (payload: UploadProductImagePayload) => Promise<void>;
+  updateProductImage: (imageId: string, payload: { alt?: string; order?: number }) => Promise<void>;
   deleteProductImage: (imageId: string) => Promise<void>;
   deleteProduct: () => Promise<void>;
   refetch: () => Promise<void>;
@@ -120,6 +121,34 @@ export function useProductEdit(productId: string): UseProductEditResult {
     [],
   );
 
+  const updateProductImage = useCallback(
+    async (imageId: string, payload: { alt?: string; order?: number }) => {
+      setIsSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      try {
+        const response = await productsService.updateProductImage(imageId, payload);
+        setProduct((current) =>
+          current
+            ? {
+                ...current,
+                images: current.images.map((image) =>
+                  image.id === imageId ? response.data : image,
+                ),
+              }
+            : current,
+        );
+        setSuccessMessage("Image metadata updated successfully.");
+      } catch {
+        setError("Unable to update image metadata.");
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [],
+  );
+
   const deleteProduct = useCallback(async () => {
     setIsSaving(true);
     setError(null);
@@ -157,6 +186,7 @@ export function useProductEdit(productId: string): UseProductEditResult {
     successMessage,
     saveProduct,
     uploadProductImage,
+    updateProductImage,
     deleteProductImage,
     deleteProduct,
     refetch: fetchData,

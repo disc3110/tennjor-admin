@@ -10,8 +10,6 @@ export type CategoryFormValues = {
   name: string;
   slug: string;
   isActive: boolean;
-  imageWebUrl: string;
-  imageMobileUrl: string;
 };
 
 type CategoryFormProps = {
@@ -30,8 +28,6 @@ export function CategoryForm({
   const [name, setName] = useState(initialValues.name);
   const [slug, setSlug] = useState(initialValues.slug);
   const [isActive, setIsActive] = useState(initialValues.isActive);
-  const [imageWebUrl, setImageWebUrl] = useState(initialValues.imageWebUrl);
-  const [imageMobileUrl, setImageMobileUrl] = useState(initialValues.imageMobileUrl);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,8 +35,6 @@ export function CategoryForm({
       name: name.trim(),
       slug: slug.trim(),
       isActive,
-      imageWebUrl: imageWebUrl.trim(),
-      imageMobileUrl: imageMobileUrl.trim(),
     });
   };
 
@@ -56,28 +50,6 @@ export function CategoryForm({
           <label className="space-y-2">
             <span className="text-sm font-medium text-slate-700">Slug</span>
             <Input value={slug} onChange={(event) => setSlug(event.target.value)} required />
-          </label>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Web Image URL</span>
-            <Input
-              type="url"
-              value={imageWebUrl}
-              onChange={(event) => setImageWebUrl(event.target.value)}
-              placeholder="https://cdn.example.com/category-web.jpg"
-            />
-          </label>
-
-          <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Mobile Image URL</span>
-            <Input
-              type="url"
-              value={imageMobileUrl}
-              onChange={(event) => setImageMobileUrl(event.target.value)}
-              placeholder="https://cdn.example.com/category-mobile.jpg"
-            />
           </label>
         </div>
 

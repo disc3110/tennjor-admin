@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { ArrowLeft, RotateCw } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
@@ -31,17 +32,18 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
     error,
     successMessage,
     saveCategory,
+    uploadCategoryImage,
     deleteCategory,
     refetch,
   } = useCategoryEdit(categoryId);
+  const [webFile, setWebFile] = useState<File | null>(null);
+  const [mobileFile, setMobileFile] = useState<File | null>(null);
 
   const handleSubmit = async (values: CategoryFormValues) => {
     const payload: UpdateCategoryPayload = {
       name: values.name,
       slug: values.slug,
       isActive: values.isActive,
-      imageWebUrl: values.imageWebUrl || undefined,
-      imageMobileUrl: values.imageMobileUrl || undefined,
     };
     await saveCategory(payload);
   };
@@ -135,8 +137,6 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
               name: category.name,
               slug: category.slug,
               isActive: category.isActive,
-              imageWebUrl: category.imageWebUrl ?? "",
-              imageMobileUrl: category.imageMobileUrl ?? "",
             }}
             isSaving={isSaving}
             submitLabel="Save Changes"
@@ -148,8 +148,13 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
           <h2 className="text-lg font-semibold text-slate-900">Category Media</h2>
           <div className="mt-3 space-y-3">
             {[
-              { label: "Web", url: category.imageWebUrl },
-              { label: "Mobile", url: category.imageMobileUrl },
+              { label: "Web", slot: "web" as const, url: category.imageWebUrl, file: webFile },
+              {
+                label: "Mobile",
+                slot: "mobile" as const,
+                url: category.imageMobileUrl,
+                file: mobileFile,
+              },
             ].map((item) => (
               <div key={item.label} className="rounded-lg border border-slate-200 p-3">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -168,6 +173,42 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
                 ) : (
                   <p className="mt-2 text-sm text-slate-500">No {item.label.toLowerCase()} image</p>
                 )}
+                <div className="mt-3 space-y-2">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/avif"
+                    onChange={(event) => {
+                      const picked = event.target.files?.[0] ?? null;
+                      if (item.slot === "web") setWebFile(picked);
+                      else setMobileFile(picked);
+                    }}
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800"
+                    disabled={isSaving}
+                  />
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-xs text-slate-500">
+                      {item.file ? item.file.name : "No file selected"}
+                    </p>
+                    <Button
+                      variant="secondary"
+                      className="h-8 px-3 text-xs"
+                      disabled={isSaving || !item.file}
+                      onClick={() => {
+                        if (!item.file) return;
+                        uploadCategoryImage(item.slot, item.file)
+                          .then(() => {
+                            if (item.slot === "web") setWebFile(null);
+                            else setMobileFile(null);
+                          })
+                          .catch(() => {
+                            // Errors are handled in hook state.
+                          });
+                      }}
+                    >
+                      {item.url ? "Replace" : "Upload"}
+                    </Button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

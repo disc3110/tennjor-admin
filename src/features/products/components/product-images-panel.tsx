@@ -9,12 +9,18 @@ import type {
   ProductAdminImageDetail,
   UploadProductImagePayload,
 } from "@/src/features/products/types/product";
+import {
+  mapPriorityToOrder,
+  productImagePriorityOptions,
+  type ProductImagePriority,
+} from "@/src/features/products/utils/image-priority";
 
 type ProductImagesPanelProps = {
   images: ProductAdminImageDetail[];
   productName: string;
   isSaving: boolean;
   onUploadImage: (payload: UploadProductImagePayload) => void;
+  onUpdateImage: (imageId: string, payload: { alt?: string; order?: number }) => void;
   onDeleteImage: (imageId: string) => void;
 };
 
@@ -31,12 +37,46 @@ export function ProductImagesPanel({
   productName,
   isSaving,
   onUploadImage,
+  onUpdateImage,
   onDeleteImage,
 }: ProductImagesPanelProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [alt, setAlt] = useState("");
-  const [order, setOrder] = useState("0");
+  const [priority, setPriority] = useState<ProductImagePriority>("cover");
+  const [drafts, setDrafts] = useState<
+    Record<string, { alt: string; priority: ProductImagePriority }>
+  >({});
+
+  const existingOrders = images.map((image) => image.order);
+
+  const orderToPriority = (order: number): ProductImagePriority => {
+    if (order === 0) return "cover";
+    if (order === 1) return "important";
+    if (order === 2) return "secondary";
+    return "detail";
+  };
+
+  const getDraft = (image: ProductAdminImageDetail) => {
+    return (
+      drafts[image.id] ?? {
+        alt: image.alt ?? "",
+        priority: orderToPriority(image.order),
+      }
+    );
+  };
+
+  const getDraftFromState = (
+    current: Record<string, { alt: string; priority: ProductImagePriority }>,
+    image: ProductAdminImageDetail,
+  ) => {
+    return (
+      current[image.id] ?? {
+        alt: image.alt ?? "",
+        priority: orderToPriority(image.order),
+      }
+    );
+  };
 
   const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const pickedFile = event.target.files?.[0] ?? null;
@@ -50,12 +90,12 @@ export function ProductImagesPanel({
     onUploadImage({
       file,
       alt: alt.trim() || undefined,
-      order: Number(order),
+      order: mapPriorityToOrder(priority, existingOrders),
     });
 
     setFile(null);
     setAlt("");
-    setOrder("0");
+    setPriority("cover");
     if (inputRef.current) inputRef.current.value = "";
   };
 
@@ -78,13 +118,17 @@ export function ProductImagesPanel({
             onChange={(event) => setAlt(event.target.value)}
             placeholder="Alt text (optional)"
           />
-          <Input
-            type="number"
-            min={0}
-            value={order}
-            onChange={(event) => setOrder(event.target.value)}
-            placeholder="Order"
-          />
+          <select
+            value={priority}
+            onChange={(event) => setPriority(event.target.value as ProductImagePriority)}
+            className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+          >
+            {productImagePriorityOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex justify-end">
           <Button type="submit" disabled={!file || isSaving}>
@@ -114,14 +158,61 @@ export function ProductImagesPanel({
                 />
               </div>
               <div className="space-y-1 p-3">
-                <p className="truncate text-sm font-medium text-slate-800">
-                  {image.alt || `Image ${index + 1}`}
-                </p>
+                <Input
+                  className="h-9"
+                  value={getDraft(image).alt}
+                  placeholder={`Image ${index + 1} alt`}
+                  onChange={(event) =>
+                    setDrafts((current) => ({
+                      ...current,
+                      [image.id]: {
+                        ...getDraftFromState(current, image),
+                        alt: event.target.value,
+                      },
+                    }))
+                  }
+                />
                 <p className="text-xs text-slate-500">
                   Order {image.order} • {getImageHost(image.url)}
                 </p>
                 <p className="truncate text-xs text-slate-400">ID: {image.id}</p>
-                <div className="pt-1">
+                <select
+                  value={getDraft(image).priority}
+                  onChange={(event) =>
+                    setDrafts((current) => ({
+                      ...current,
+                      [image.id]: {
+                        ...getDraftFromState(current, image),
+                        priority: event.target.value as ProductImagePriority,
+                      },
+                    }))
+                  }
+                  className="h-9 w-full rounded-lg border border-slate-300 bg-white px-2 text-xs text-slate-900 outline-none"
+                >
+                  {productImagePriorityOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex gap-2 pt-1">
+                  <Button
+                    variant="secondary"
+                    className="h-8 px-2 text-xs"
+                    disabled={isSaving}
+                    onClick={() => {
+                      const draft = getDraft(image);
+                      const otherOrders = images
+                        .filter((item) => item.id !== image.id)
+                        .map((item) => item.order);
+                      onUpdateImage(image.id, {
+                        alt: draft.alt.trim() || undefined,
+                        order: mapPriorityToOrder(draft.priority, otherOrders),
+                      });
+                    }}
+                  >
+                    Save
+                  </Button>
                   <Button
                     variant="ghost"
                     className="h-8 px-2 text-xs"

@@ -31,6 +31,7 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
     successMessage,
     saveProduct,
     uploadProductImage,
+    updateProductImage,
     deleteProductImage,
     deleteProduct,
     refetch,
@@ -183,6 +184,11 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
           isSaving={isSaving}
           onUploadImage={(payload) => {
             uploadProductImage(payload).catch(() => {
+              // Errors are handled in hook state.
+            });
+          }}
+          onUpdateImage={(imageId, payload) => {
+            updateProductImage(imageId, payload).catch(() => {
               // Errors are handled in hook state.
             });
           }}

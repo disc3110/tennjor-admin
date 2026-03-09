@@ -14,6 +14,7 @@ import type {
   ProductVariantResponse,
   UploadProductImagePayload,
   UploadProductImageResponse,
+  ProductAdminImageDetail,
   UpdateProductVariantPayload,
   UpdateAdminProductPayload,
   UpdateAdminProductResponse,
@@ -106,6 +107,15 @@ export const productsService = {
       {
         method: "POST",
         body: formData,
+      },
+    );
+  },
+  updateProductImage(imageId: string, payload: { alt?: string; order?: number }) {
+    return apiClient.request<{ message: string; data: ProductAdminImageDetail }, { alt?: string; order?: number }>(
+      `/admin/product-images/${imageId}`,
+      {
+        method: "PATCH",
+        body: payload,
       },
     );
   },
