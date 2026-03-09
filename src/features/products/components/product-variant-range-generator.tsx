@@ -96,10 +96,6 @@ export function ProductVariantRangeGenerator({
           </Button>
         </div>
       </form>
-
-      <p className="mt-3 text-xs text-slate-500">
-        Bulk endpoint is not documented. This uses repeated single-create calls safely.
-      </p>
     </Card>
   );
 }

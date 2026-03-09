@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Shapes, MessageSquareQuote, LogOut, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  Package,
+  Shapes,
+  MessageSquareQuote,
+  ShoppingBag,
+  ReceiptText,
+  LogOut,
+  X,
+} from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { Button } from "@/src/components/ui/button";
 
@@ -17,6 +26,8 @@ const navItems = [
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Categories", href: "/admin/categories", icon: Shapes },
   { label: "Quotes", href: "/admin/quotes", icon: MessageSquareQuote },
+  { label: "Sales Quotes", href: "/admin/sales-quotes", icon: ReceiptText },
+  { label: "Sales", href: "/admin/sales", icon: ShoppingBag },
 ] as const;
 
 export function AdminSidebar({ isOpen, onClose, onSignOut }: AdminSidebarProps) {
@@ -59,7 +70,7 @@ export function AdminSidebar({ isOpen, onClose, onSignOut }: AdminSidebarProps) 
             const Icon = item.icon;
             const isActive =
               pathname === item.href ||
-              (item.href !== "/admin" && pathname.startsWith(item.href));
+              (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
 
             return (
               <Link

@@ -29,6 +29,9 @@ export const categoriesService = {
       `/admin/categories${toQueryString(query)}`,
     );
   },
+  exportCsv(query: CategoryListQuery = {}) {
+    return apiClient.requestBlob(`/admin/categories/export/csv${toQueryString(query)}`);
+  },
   getById(id: string) {
     return apiClient.request<CategoryDetailResponse>(`/admin/categories/${id}`);
   },

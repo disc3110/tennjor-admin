@@ -3,7 +3,7 @@
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Plus, RotateCw, Search } from "lucide-react";
+import { Download, Plus, RotateCw, Search } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
@@ -11,6 +11,7 @@ import { PageHeader } from "@/src/components/ui/page-header";
 import { ProductsEmptyState } from "@/src/features/products/components/products-empty-state";
 import { ProductsLoadingState } from "@/src/features/products/components/products-loading-state";
 import { ProductsTable } from "@/src/features/products/components/products-table";
+import { useProductsExport } from "@/src/features/products/hooks/use-products-export";
 import { useProducts } from "@/src/features/products/hooks/use-products";
 
 type StatusFilter = "all" | "active" | "inactive";
@@ -26,6 +27,8 @@ export function ProductsView() {
   const searchParams = useSearchParams();
   const statusFilter = parseStatusFilter(searchParams.get("status"));
   const searchQuery = searchParams.get("search") ?? "";
+  const categoryId = searchParams.get("categoryId") ?? "";
+  const { isExporting, exportError, exportCsv } = useProductsExport();
 
   const {
     products,
@@ -79,6 +82,28 @@ export function ProductsView() {
             </Link>
             <Button
               variant="secondary"
+              disabled={isExporting}
+              iconLeft={<Download className="size-4" />}
+              onClick={() => {
+                exportCsv({
+                  search: searchQuery || undefined,
+                  categoryId: categoryId || undefined,
+                  isActive:
+                    statusFilter === "active"
+                      ? true
+                      : statusFilter === "inactive"
+                        ? false
+                        : undefined,
+                }).catch(() => {
+                  // Errors are handled in hook state.
+                });
+              }}
+              className="w-full sm:w-auto"
+            >
+              {isExporting ? "Exporting..." : "Export CSV"}
+            </Button>
+            <Button
+              variant="secondary"
               iconLeft={<RotateCw className="size-4" />}
               onClick={() => {
                 refetch().catch(() => {
@@ -92,6 +117,12 @@ export function ProductsView() {
           </div>
         }
       />
+
+      {exportError ? (
+        <Card>
+          <p className="text-sm font-medium text-red-600">{exportError}</p>
+        </Card>
+      ) : null}
 
       <Card>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

@@ -3,7 +3,7 @@
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Plus, RotateCw, Search } from "lucide-react";
+import { Download, Plus, RotateCw, Search } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
@@ -11,6 +11,7 @@ import { PageHeader } from "@/src/components/ui/page-header";
 import { CategoriesEmptyState } from "@/src/features/categories/components/categories-empty-state";
 import { CategoriesLoadingState } from "@/src/features/categories/components/categories-loading-state";
 import { CategoriesTable } from "@/src/features/categories/components/categories-table";
+import { useCategoriesExport } from "@/src/features/categories/hooks/use-categories-export";
 import { useCategories } from "@/src/features/categories/hooks/use-categories";
 
 type StatusFilter = "all" | "active" | "inactive";
@@ -26,6 +27,7 @@ export function CategoriesView() {
   const searchParams = useSearchParams();
   const statusFilter = parseStatusFilter(searchParams.get("status"));
   const searchQuery = searchParams.get("search") ?? "";
+  const { isExporting, exportError, exportCsv } = useCategoriesExport();
 
   const { categories, isLoading, isUpdating, error, refetch, toggleCategoryActive } =
     useCategories({
@@ -70,6 +72,27 @@ export function CategoriesView() {
             </Link>
             <Button
               variant="secondary"
+              disabled={isExporting}
+              iconLeft={<Download className="size-4" />}
+              onClick={() => {
+                exportCsv({
+                  search: searchQuery || undefined,
+                  isActive:
+                    statusFilter === "active"
+                      ? true
+                      : statusFilter === "inactive"
+                        ? false
+                        : undefined,
+                }).catch(() => {
+                  // Errors are handled in hook state.
+                });
+              }}
+              className="w-full sm:w-auto"
+            >
+              {isExporting ? "Exporting..." : "Export CSV"}
+            </Button>
+            <Button
+              variant="secondary"
               iconLeft={<RotateCw className="size-4" />}
               onClick={() => {
                 refetch().catch(() => {
@@ -83,6 +106,12 @@ export function CategoriesView() {
           </div>
         }
       />
+
+      {exportError ? (
+        <Card>
+          <p className="text-sm font-medium text-red-600">{exportError}</p>
+        </Card>
+      ) : null}
 
       <Card>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

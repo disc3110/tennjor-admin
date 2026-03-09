@@ -36,9 +36,25 @@ function toQueryString(query: ProductAdminListQuery) {
   return parsed ? `?${parsed}` : "";
 }
 
+function toExportQueryString(query: Pick<ProductAdminListQuery, "search" | "categoryId" | "isActive">) {
+  const params = new URLSearchParams();
+
+  if (query.search) params.set("search", query.search);
+  if (query.categoryId) params.set("categoryId", query.categoryId);
+  if (typeof query.isActive === "boolean") {
+    params.set("isActive", String(query.isActive));
+  }
+
+  const parsed = params.toString();
+  return parsed ? `?${parsed}` : "";
+}
+
 export const productsService = {
   list(query: ProductAdminListQuery = {}) {
     return apiClient.request<ProductAdminListResponse>(`/admin/products${toQueryString(query)}`);
+  },
+  exportCsv(query: Pick<ProductAdminListQuery, "search" | "categoryId" | "isActive"> = {}) {
+    return apiClient.requestBlob(`/admin/products/export/csv${toExportQueryString(query)}`);
   },
   getById(id: string) {
     return apiClient.request<ProductAdminDetailResponse>(`/admin/products/${id}`);

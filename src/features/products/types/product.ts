@@ -89,6 +89,8 @@ export type ProductAdmin = {
   slug: string;
   description: string | null;
   isActive: boolean;
+  baseCost?: string | number | null;
+  costCurrency?: string | null;
   createdAt: string;
   updatedAt: string;
   category: ProductAdminCategory;

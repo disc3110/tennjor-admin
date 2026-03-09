@@ -10,6 +10,11 @@ type RequestOptions<TBody = unknown> = {
   requireAuth?: boolean;
 };
 
+type BlobResponse = {
+  blob: Blob;
+  headers: Headers;
+};
+
 class ApiClient {
   private readonly baseUrl: string;
 
@@ -21,6 +26,35 @@ class ApiClient {
     path: string,
     options: RequestOptions<TBody> = {},
   ): Promise<TResponse> {
+    const response = await this.fetchResponse(path, options);
+
+    if (response.status === 204 || response.headers.get("content-length") === "0") {
+      return undefined as TResponse;
+    }
+
+    const contentType = response.headers.get("content-type") ?? "";
+    if (contentType.includes("application/json")) {
+      return (await response.json()) as TResponse;
+    }
+
+    return (await response.text()) as TResponse;
+  }
+
+  async requestBlob<TBody = unknown>(
+    path: string,
+    options: RequestOptions<TBody> = {},
+  ): Promise<BlobResponse> {
+    const response = await this.fetchResponse(path, options);
+    return {
+      blob: await response.blob(),
+      headers: response.headers,
+    };
+  }
+
+  private async fetchResponse<TBody = unknown>(
+    path: string,
+    options: RequestOptions<TBody> = {},
+  ): Promise<Response> {
     const { method = "GET", body, headers, requireAuth = true } = options;
     const token = requireAuth ? loadAccessToken() : null;
     const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
@@ -43,16 +77,7 @@ class ApiClient {
       throw new Error(`API request failed: ${response.status}`);
     }
 
-    if (response.status === 204 || response.headers.get("content-length") === "0") {
-      return undefined as TResponse;
-    }
-
-    const contentType = response.headers.get("content-type") ?? "";
-    if (contentType.includes("application/json")) {
-      return (await response.json()) as TResponse;
-    }
-
-    return (await response.text()) as TResponse;
+    return response;
   }
 }
 
