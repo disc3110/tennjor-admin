@@ -52,7 +52,7 @@ export function ProductForm({
       <form className="space-y-5" onSubmit={(event) => void handleSubmit(event)}>
         <div className="grid gap-4 md:grid-cols-2">
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Name</span>
+            <span className="text-sm font-medium text-slate-700">Nombre</span>
             <Input value={name} onChange={(event) => setName(event.target.value)} required />
           </label>
 
@@ -63,7 +63,7 @@ export function ProductForm({
         </div>
 
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700">Description</span>
+            <span className="text-sm font-medium text-slate-700">Descripción</span>
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
@@ -74,17 +74,17 @@ export function ProductForm({
 
         <div className="grid gap-4 md:grid-cols-2">
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Category</span>
+            <span className="text-sm font-medium text-slate-700">Categoría</span>
             <select
               value={categoryId}
               onChange={(event) => setCategoryId(event.target.value)}
               className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
               required
             >
-              {categories.length === 0 ? <option value="">No categories available</option> : null}
+              {categories.length === 0 ? <option value="">No hay categorías disponibles</option> : null}
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
-                  {category.name} {category.isActive ? "" : "(Inactive)"}
+                  {category.name} {category.isActive ? "" : "(Inactiva)"}
                 </option>
               ))}
             </select>
@@ -97,13 +97,13 @@ export function ProductForm({
               onChange={(event) => setIsActive(event.target.checked)}
               className="size-4 rounded border-slate-300"
             />
-            <span className="text-sm font-medium text-slate-700">Product is active</span>
+            <span className="text-sm font-medium text-slate-700">El producto está activo</span>
           </label>
         </div>
 
         <div className="flex justify-end">
           <Button type="submit" disabled={isSaving || categories.length === 0}>
-            {isSaving ? "Saving..." : submitLabel}
+            {isSaving ? "Guardando..." : submitLabel}
           </Button>
         </div>
       </form>

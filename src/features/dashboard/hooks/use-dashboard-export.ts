@@ -27,7 +27,7 @@ export function useDashboardExport(): UseDashboardExportResult {
 
       downloadBlobFile(response.blob, filename);
     } catch {
-      setExportError("Unable to export dashboard CSV right now.");
+      setExportError("No se pudo exportar el CSV del panel en este momento.");
     } finally {
       setIsExporting(false);
     }

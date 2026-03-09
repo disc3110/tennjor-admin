@@ -23,12 +23,12 @@ export function CategoriesTable({
       <table className="min-w-full divide-y divide-slate-200">
         <thead>
           <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <th className="px-4 py-3">Category</th>
+            <th className="px-4 py-3">Categoría</th>
             <th className="px-4 py-3">Slug</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Products</th>
-            <th className="px-4 py-3">Updated</th>
-            <th className="px-4 py-3 text-right">Actions</th>
+            <th className="px-4 py-3">Estado</th>
+            <th className="px-4 py-3">Productos</th>
+            <th className="px-4 py-3">Actualizado</th>
+            <th className="px-4 py-3 text-right">Acciones</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">
@@ -47,14 +47,14 @@ export function CategoriesTable({
                     href={`/admin/categories/${category.id}`}
                     className="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
                   >
-                    Edit
+                    Editar
                   </Link>
                   <Button
                     variant="secondary"
                     disabled={isUpdating === category.id}
                     onClick={() => onToggleStatus(category)}
                   >
-                    {category.isActive ? "Deactivate" : "Activate"}
+                    {category.isActive ? "Desactivar" : "Activar"}
                   </Button>
                 </div>
               </td>

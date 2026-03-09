@@ -16,20 +16,20 @@ export function AdminHeader({ onOpenSidebar }: AdminHeaderProps) {
             variant="ghost"
             className="p-2 md:hidden"
             onClick={onOpenSidebar}
-            aria-label="Open navigation"
+            aria-label="Abrir navegación"
           >
             <Menu className="size-5" />
           </Button>
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Admin Panel
+              Panel de administración
             </p>
             <p className="text-sm font-semibold text-slate-900">Tennjor</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
-            <p className="text-sm font-medium text-slate-900">Admin User</p>
+            <p className="text-sm font-medium text-slate-900">Usuario administrador</p>
             <p className="text-xs text-slate-500">placeholder@tennjor.com</p>
           </div>
           <div className="flex size-9 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">

@@ -39,11 +39,11 @@ export function ProductVariantCreateForm({ isSaving, onSubmit }: ProductVariantC
 
   return (
     <Card>
-      <h2 className="text-lg font-semibold text-slate-900">Add Variant</h2>
+      <h2 className="text-lg font-semibold text-slate-900">Agregar variante</h2>
       <form className="mt-4 grid gap-3 md:grid-cols-2" onSubmit={handleSubmit}>
-        <Input placeholder="Size (e.g. 42 or 42.5)" value={size} onChange={(e) => setSize(e.target.value)} required />
+        <Input placeholder="Talla (ej. 42 o 42.5)" value={size} onChange={(e) => setSize(e.target.value)} required />
         <Input placeholder="Color" value={color} onChange={(e) => setColor(e.target.value)} required />
-        <Input placeholder="SKU (optional)" value={sku} onChange={(e) => setSku(e.target.value)} />
+        <Input placeholder="SKU (opcional)" value={sku} onChange={(e) => setSku(e.target.value)} />
         <Input
           type="number"
           min={0}
@@ -54,11 +54,11 @@ export function ProductVariantCreateForm({ isSaving, onSubmit }: ProductVariantC
         />
         <label className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">
           <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
-          Active variant
+          Variante activa
         </label>
         <div className="flex justify-end">
           <Button type="submit" disabled={isSaving}>
-            {isSaving ? "Creating..." : "Create Variant"}
+            {isSaving ? "Creando..." : "Crear variante"}
           </Button>
         </div>
       </form>

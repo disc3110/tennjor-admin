@@ -13,15 +13,15 @@ export function SalesTable({ sales }: SalesTableProps) {
       <table className="min-w-full divide-y divide-slate-200">
         <thead className="bg-slate-50">
           <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <th className="px-4 py-3">Sale #</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Customer</th>
-            <th className="px-4 py-3">Currency</th>
-            <th className="px-4 py-3">Revenue</th>
-            <th className="px-4 py-3">Cost</th>
-            <th className="px-4 py-3">Profit</th>
-            <th className="px-4 py-3">Margin</th>
-            <th className="px-4 py-3">Completed</th>
+            <th className="px-4 py-3">Venta #</th>
+            <th className="px-4 py-3">Estado</th>
+            <th className="px-4 py-3">Cliente</th>
+            <th className="px-4 py-3">Moneda</th>
+            <th className="px-4 py-3">Ingresos</th>
+            <th className="px-4 py-3">Costo</th>
+            <th className="px-4 py-3">Ganancia</th>
+            <th className="px-4 py-3">Margen</th>
+            <th className="px-4 py-3">Completada</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">

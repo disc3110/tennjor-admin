@@ -87,8 +87,8 @@ export function SalesQuotesView() {
   return (
     <section className="space-y-6">
       <PageHeader
-        title="Sales Quotes"
-        subtitle="Internal quotes used by the sales team before final completion."
+        title="Cotizaciones de venta"
+        subtitle="Cotizaciones internas usadas por el equipo comercial antes del cierre final."
         action={
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Link
@@ -96,7 +96,7 @@ export function SalesQuotesView() {
               className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition-colors hover:bg-slate-700"
             >
               <Plus className="size-4" />
-              New Sales Quote
+              Nueva cotización de venta
             </Link>
             <Button
               variant="secondary"
@@ -108,7 +108,7 @@ export function SalesQuotesView() {
               }}
               className="w-full sm:w-auto"
             >
-              Refresh
+              Actualizar
             </Button>
           </div>
         }
@@ -130,7 +130,7 @@ export function SalesQuotesView() {
           >
             {statusOptions.map((option) => (
               <option key={option} value={option}>
-                {option === "all" ? "All statuses" : option}
+                {option === "all" ? "Todos los estados" : option}
               </option>
             ))}
           </select>
@@ -145,7 +145,7 @@ export function SalesQuotesView() {
                 limit,
               })
             }
-            placeholder="Search by code or customer"
+            placeholder="Buscar por código o cliente"
             className="h-10"
           />
 
@@ -161,7 +161,7 @@ export function SalesQuotesView() {
                 limit,
               })
             }
-            placeholder="Page"
+            placeholder="Página"
             className="h-10"
           />
 
@@ -177,7 +177,7 @@ export function SalesQuotesView() {
                 limit: parsePositiveInt(event.target.value, 20),
               })
             }
-            placeholder="Limit"
+            placeholder="Límite"
             className="h-10"
           />
         </div>
@@ -189,7 +189,7 @@ export function SalesQuotesView() {
           <p className="text-2xl font-semibold text-slate-900">{meta?.total ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Page</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Página</p>
           <p className="text-2xl font-semibold text-slate-900">{meta?.page ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
@@ -197,7 +197,7 @@ export function SalesQuotesView() {
           <p className="text-2xl font-semibold text-slate-900">{meta?.limit ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total Pages</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total de páginas</p>
           <p className="text-2xl font-semibold text-slate-900">{meta?.totalPages ?? "--"}</p>
         </Card>
       </div>
@@ -206,16 +206,16 @@ export function SalesQuotesView() {
 
       {!isLoading && error ? (
         <Card className="py-14 text-center">
-          <h2 className="text-lg font-semibold text-slate-900">Could not load sales quotes</h2>
+          <h2 className="text-lg font-semibold text-slate-900">No se pudieron cargar las cotizaciones de venta</h2>
           <p className="mt-2 text-sm text-slate-500">{error}</p>
         </Card>
       ) : null}
 
       {!isLoading && !error && quotes.length === 0 ? (
         <Card className="py-14 text-center">
-          <h2 className="text-lg font-semibold text-slate-900">No sales quotes found</h2>
+          <h2 className="text-lg font-semibold text-slate-900">No se encontraron cotizaciones de venta</h2>
           <p className="mt-2 text-sm text-slate-500">
-            Adjust filters or create the first internal sales quote.
+            Ajusta los filtros o crea la primera cotización de venta interna.
           </p>
         </Card>
       ) : null}

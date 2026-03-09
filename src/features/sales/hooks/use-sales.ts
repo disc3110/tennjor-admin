@@ -53,7 +53,7 @@ export function useSales(query: GetCompletedSalesQuery): UseSalesResult {
       setSales(response.data);
       setMeta(response.meta);
     } catch {
-      setError("Unable to load completed sales right now.");
+      setError("No se pudieron cargar las ventas completadas en este momento.");
     } finally {
       setIsLoading(false);
     }

@@ -22,8 +22,8 @@ type SalesQuoteDetailViewProps = {
 };
 
 const discountOptions: Array<{ label: string; value: InternalDiscountType }> = [
-  { label: "Fixed", value: "FIXED" },
-  { label: "Percentage", value: "PERCENTAGE" },
+  { label: "Fijo", value: "FIXED" },
+  { label: "Porcentaje", value: "PERCENTAGE" },
 ];
 
 export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
@@ -65,7 +65,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <PageHeader title="Sales Quote" subtitle="Loading quote data..." />
+        <PageHeader title="Cotización de venta" subtitle="Cargando datos de la cotización..." />
         <Card className="h-56 animate-pulse bg-slate-100" />
       </section>
     );
@@ -74,8 +74,8 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
   if (!quote) {
     return (
       <Card className="py-14 text-center">
-        <h2 className="text-lg font-semibold text-slate-900">Sales quote not found</h2>
-        <p className="mt-2 text-sm text-slate-500">The quote may have been removed.</p>
+        <h2 className="text-lg font-semibold text-slate-900">Cotización de venta no encontrada</h2>
+        <p className="mt-2 text-sm text-slate-500">Es posible que la cotización haya sido eliminada.</p>
       </Card>
     );
   }
@@ -127,7 +127,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
 
   const handleCompleteSale = async () => {
     const confirmed = window.confirm(
-      "Complete this quote into a finalized sale? This action should only be used when quote data is final.",
+      "¿Completar esta cotización y convertirla en una venta final? Esta acción debe usarse solo cuando los datos de la cotización sean definitivos.",
     );
     if (!confirmed) return;
 
@@ -147,7 +147,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
         >
           <ArrowLeft className="size-4" />
-          Back to sales quotes
+          Volver a cotizaciones de venta
         </Link>
         <Button
           variant="secondary"
@@ -158,13 +158,13 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
             });
           }}
         >
-          Reload
+          Recargar
         </Button>
       </div>
 
       <PageHeader
         title={quote.code}
-        subtitle={`Created ${formatDateTime(quote.createdAt)}`}
+        subtitle={`Creada ${formatDateTime(quote.createdAt)}`}
         action={<SalesQuoteStatusBadge status={quote.status} />}
       />
 
@@ -183,10 +183,10 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">
           <Card className="space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">Quote Header</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Encabezado de la cotización</h2>
             {!isEditable ? (
               <p className="text-xs font-medium text-amber-700">
-                This quote is no longer editable because its status is {quote.status}.
+                Esta cotización ya no se puede editar porque su estado es {quote.status}.
               </p>
             ) : null}
             <form
@@ -202,31 +202,31 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 <Input
                   name="customerName"
                   defaultValue={quote.customerName}
-                  placeholder="Customer name"
+                  placeholder="Nombre del cliente"
                   disabled={!isEditable || isSaving}
                 />
                 <Input
                   name="currency"
                   defaultValue={quote.currency}
-                  placeholder="Currency"
+                  placeholder="Moneda"
                   disabled={!isEditable || isSaving}
                 />
                 <Input
                   name="customerPhone"
                   defaultValue={quote.customerPhone ?? ""}
-                  placeholder="Customer phone"
+                  placeholder="Teléfono del cliente"
                   disabled={!isEditable || isSaving}
                 />
                 <Input
                   name="customerEmail"
                   defaultValue={quote.customerEmail ?? ""}
-                  placeholder="Customer email"
+                  placeholder="Correo del cliente"
                   disabled={!isEditable || isSaving}
                 />
                 <Input
                   name="customerCity"
                   defaultValue={quote.customerCity ?? ""}
-                  placeholder="Customer city"
+                  placeholder="Ciudad del cliente"
                   disabled={!isEditable || isSaving}
                 />
                 <Input
@@ -235,20 +235,20 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                   min={0}
                   step="0.01"
                   defaultValue={String(toNumber(quote.discountTotal))}
-                  placeholder="Discount total"
+                  placeholder="Descuento total"
                   disabled={!isEditable || isSaving}
                 />
                 <textarea
                   name="notes"
                   defaultValue={quote.notes ?? ""}
                   className="min-h-24 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200 md:col-span-2"
-                  placeholder="Notes"
+                  placeholder="Notas"
                   disabled={!isEditable || isSaving}
                 />
               </div>
               <div className="flex justify-end">
                 <Button type="submit" disabled={isSaving || !isEditable}>
-                  {isSaving ? "Saving..." : "Save Header"}
+                  {isSaving ? "Guardando..." : "Guardar encabezado"}
                 </Button>
               </div>
             </form>
@@ -256,9 +256,9 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
 
           <Card className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">Quote Items</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Artículos de la cotización</h2>
               <Button variant="secondary" onClick={() => void recalculate()} disabled={isSaving}>
-                Recalculate Totals
+                Recalcular totales
               </Button>
             </div>
 
@@ -278,7 +278,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
                 disabled={!isEditable || isSaving}
               >
-                <option value="">Select product</option>
+                <option value="">Seleccionar producto</option>
                 {productOptions.map((product) => (
                   <option key={product.id} value={product.id}>
                     {product.name}
@@ -294,7 +294,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
                 disabled={!isEditable || isSaving || !selectedProduct}
               >
-                <option value="">Variant (optional)</option>
+                <option value="">Variante (opcional)</option>
                 {(selectedProduct?.variants ?? []).map((variant) => (
                   <option key={variant.id} value={variant.id}>
                     {variant.size} / {variant.color} {variant.sku ? `(${variant.sku})` : ""}
@@ -309,7 +309,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 onChange={(event) =>
                   setItemDraft((current) => ({ ...current, quantity: event.target.value }))
                 }
-                placeholder="Quantity"
+                placeholder="Cantidad"
                 disabled={!isEditable || isSaving}
               />
               <Input
@@ -320,7 +320,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 onChange={(event) =>
                   setItemDraft((current) => ({ ...current, unitSalePrice: event.target.value }))
                 }
-                placeholder="Unit sale price"
+                placeholder="Precio de venta unitario"
                 disabled={!isEditable || isSaving}
               />
               <Input
@@ -331,7 +331,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 onChange={(event) =>
                   setItemDraft((current) => ({ ...current, unitCostSnapshot: event.target.value }))
                 }
-                placeholder="Unit cost snapshot (optional)"
+                placeholder="Costo unitario snapshot (opcional)"
                 disabled={!isEditable || isSaving}
               />
               <select
@@ -342,7 +342,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
                 disabled={!isEditable || isSaving}
               >
-                <option value="">Discount type (optional)</option>
+                <option value="">Tipo de descuento (opcional)</option>
                 {discountOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -357,7 +357,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 onChange={(event) =>
                   setItemDraft((current) => ({ ...current, discountValue: event.target.value }))
                 }
-                placeholder="Discount value"
+                placeholder="Valor del descuento"
                 disabled={!isEditable || isSaving || !itemDraft.discountType}
               />
               <Input
@@ -367,7 +367,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 onChange={(event) =>
                   setItemDraft((current) => ({ ...current, sortOrder: event.target.value }))
                 }
-                placeholder="Sort order"
+                placeholder="Orden"
                 disabled={!isEditable || isSaving}
               />
               <div className="md:col-span-2 flex justify-end">
@@ -380,7 +380,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                     Number(itemDraft.quantity) <= 0
                   }
                 >
-                  {isSaving ? "Saving..." : "Add Item"}
+                  {isSaving ? "Guardando..." : "Agregar artículo"}
                 </Button>
               </div>
             </div>
@@ -389,14 +389,14 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
               <table className="min-w-full divide-y divide-slate-200">
                 <thead>
                   <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <th className="px-3 py-2">Product</th>
-                    <th className="px-3 py-2">Variant</th>
-                    <th className="px-3 py-2">Qty</th>
-                    <th className="px-3 py-2">Sale Price</th>
-                    <th className="px-3 py-2">Cost</th>
-                    <th className="px-3 py-2">Revenue</th>
-                    <th className="px-3 py-2">Profit</th>
-                    <th className="px-3 py-2">Actions</th>
+                    <th className="px-3 py-2">Producto</th>
+                    <th className="px-3 py-2">Variante</th>
+                    <th className="px-3 py-2">Cant.</th>
+                    <th className="px-3 py-2">Precio venta</th>
+                    <th className="px-3 py-2">Costo</th>
+                    <th className="px-3 py-2">Ingresos</th>
+                    <th className="px-3 py-2">Ganancia</th>
+                    <th className="px-3 py-2">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -415,7 +415,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                         setEditingItemId(null);
                       }}
                       onDelete={async () => {
-                        const confirmed = window.confirm("Delete this quote item?");
+                        const confirmed = window.confirm("¿Eliminar este artículo de la cotización?");
                         if (!confirmed) return;
                         await deleteItem(item.id);
                       }}
@@ -429,26 +429,26 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
 
         <div className="space-y-6">
           <Card className="space-y-3">
-            <h2 className="text-lg font-semibold text-slate-900">Quote Totals</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Totales de la cotización</h2>
             <InfoRow label="Subtotal" value={formatMoney(quote.subtotal, quote.currency)} />
-            <InfoRow label="Discount" value={formatMoney(quote.discountTotal, quote.currency)} />
-            <InfoRow label="Revenue" value={formatMoney(quote.totalRevenue, quote.currency)} />
-            <InfoRow label="Cost" value={formatMoney(quote.totalCost, quote.currency)} />
-            <InfoRow label="Profit" value={formatMoney(quote.totalProfit, quote.currency)} />
-            <InfoRow label="Margin" value={formatPercent(quote.marginPct)} />
+            <InfoRow label="Descuento" value={formatMoney(quote.discountTotal, quote.currency)} />
+            <InfoRow label="Ingresos" value={formatMoney(quote.totalRevenue, quote.currency)} />
+            <InfoRow label="Costo" value={formatMoney(quote.totalCost, quote.currency)} />
+            <InfoRow label="Ganancia" value={formatMoney(quote.totalProfit, quote.currency)} />
+            <InfoRow label="Margen" value={formatPercent(quote.marginPct)} />
           </Card>
 
           <Card className="space-y-3">
-            <h2 className="text-lg font-semibold text-slate-900">Context</h2>
-            <InfoRow label="Quote ID" value={quote.id} />
-            <InfoRow label="Status" value={quote.status} />
-            <InfoRow label="Completed At" value={formatDateTime(quote.completedAt)} />
+            <h2 className="text-lg font-semibold text-slate-900">Contexto</h2>
+            <InfoRow label="ID cotización" value={quote.id} />
+            <InfoRow label="Estado" value={quote.status} />
+            <InfoRow label="Completada" value={formatDateTime(quote.completedAt)} />
             <InfoRow
-              label="Public Quote"
+              label="Cotización pública"
               value={quote.publicQuoteRequest ? `${quote.publicQuoteRequest.id} (${quote.publicQuoteRequest.status})` : "--"}
             />
             <InfoRow
-              label="Created By"
+              label="Creada por"
               value={quote.createdBy ? `${quote.createdBy.name} (${quote.createdBy.email})` : "--"}
             />
           </Card>
@@ -458,7 +458,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
             disabled={isSaving || quote.items.length === 0 || quote.status === "COMPLETED"}
             onClick={() => void handleCompleteSale()}
           >
-            {isSaving ? "Processing..." : "Complete Sale"}
+            {isSaving ? "Procesando..." : "Completar venta"}
           </Button>
         </div>
       </div>
@@ -523,7 +523,7 @@ function QuoteItemRow({
         <td className="px-3 py-3">
           <div className="flex gap-2">
             <Button variant="secondary" disabled={!isEditable || isSaving} onClick={onStartEdit}>
-              Edit
+              Editar
             </Button>
             <Button
               variant="ghost"
@@ -535,7 +535,7 @@ function QuoteItemRow({
               }}
               className="text-red-600 hover:bg-red-50"
             >
-              Delete
+              Eliminar
             </Button>
           </div>
         </td>
@@ -576,7 +576,7 @@ function QuoteItemRow({
             onChange={(event) => setDraft((current) => ({ ...current, discountType: event.target.value }))}
             className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
           >
-            <option value="">No discount</option>
+            <option value="">Sin descuento</option>
             {discountOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -603,7 +603,7 @@ function QuoteItemRow({
 
         <div className="mt-3 flex justify-end gap-2">
           <Button variant="ghost" onClick={onCancelEdit} disabled={isSaving}>
-            Cancel
+            Cancelar
           </Button>
           <Button
             onClick={() => {
@@ -620,7 +620,7 @@ function QuoteItemRow({
             }}
             disabled={isSaving}
           >
-            {isSaving ? "Saving..." : "Save Item"}
+            {isSaving ? "Guardando..." : "Guardar artículo"}
           </Button>
         </div>
       </td>

@@ -35,7 +35,7 @@ export function useCategories(query: CategoryListQuery = {}): UseCategoriesResul
 
       setCategories(filteredData);
     } catch {
-      setError("Unable to load categories right now.");
+      setError("No se pudieron cargar las categorías en este momento.");
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +53,7 @@ export function useCategories(query: CategoryListQuery = {}): UseCategoriesResul
         previous.map((item) => (item.id === category.id ? response.data : item)),
       );
     } catch {
-      setError("Unable to update category status.");
+      setError("No se pudo actualizar el estado de la categoría.");
     } finally {
       setIsUpdating(null);
     }

@@ -33,7 +33,7 @@ export function ProductVariantsView({ productId }: ProductVariantsViewProps) {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <PageHeader title="Variants" subtitle="Loading product variants..." />
+        <PageHeader title="Variantes" subtitle="Cargando variantes del producto..." />
         <Card className="h-56 animate-pulse bg-slate-100" />
       </section>
     );
@@ -42,9 +42,9 @@ export function ProductVariantsView({ productId }: ProductVariantsViewProps) {
   if (!product) {
     return (
       <Card className="py-14 text-center">
-        <h2 className="text-lg font-semibold text-slate-900">Product not found</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Producto no encontrado</h2>
         <p className="mt-2 text-sm text-slate-500">
-          The product may have been removed or is unavailable.
+          Es posible que el producto haya sido eliminado o no esté disponible.
         </p>
       </Card>
     );
@@ -58,7 +58,7 @@ export function ProductVariantsView({ productId }: ProductVariantsViewProps) {
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
         >
           <ArrowLeft className="size-4" />
-          Back to product
+          Volver al producto
         </Link>
         <Button
           variant="secondary"
@@ -69,13 +69,13 @@ export function ProductVariantsView({ productId }: ProductVariantsViewProps) {
             });
           }}
         >
-          Reload
+          Recargar
         </Button>
       </div>
 
       <PageHeader
-        title={`Variants • ${product.name}`}
-        subtitle="Manage shoe sizes, colors, stock, and availability."
+        title={`Variantes • ${product.name}`}
+        subtitle="Gestiona tallas, colores, stock y disponibilidad."
       />
 
       {error ? (

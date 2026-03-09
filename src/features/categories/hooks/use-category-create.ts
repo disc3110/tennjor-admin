@@ -50,7 +50,7 @@ export function useCategoryCreate(): UseCategoryCreateResult {
           await categoriesService.uploadWebImage(category.id, media.webFile);
         } catch {
           imageUploadFailed = true;
-          warnings.push("web image upload failed");
+          warnings.push("falló la carga de imagen web");
         }
       }
 
@@ -59,13 +59,13 @@ export function useCategoryCreate(): UseCategoryCreateResult {
           await categoriesService.uploadMobileImage(category.id, media.mobileFile);
         } catch {
           imageUploadFailed = true;
-          warnings.push("mobile image upload failed");
+          warnings.push("falló la carga de imagen móvil");
         }
       }
 
       if (warnings.length > 0) {
         setSuccessMessage(
-          `Category created successfully, but ${warnings.join(" and ")}. You can retry on the edit page.`,
+          `Categoría creada correctamente, pero ${warnings.join(" y ")}. Puedes reintentar en la página de edición.`,
         );
       } else {
         setSuccessMessage(createResponse.message);
@@ -73,7 +73,7 @@ export function useCategoryCreate(): UseCategoryCreateResult {
 
       return { category, imageUploadFailed };
     } catch {
-      setError("Unable to create category.");
+      setError("No se pudo crear la categoría.");
       return { category: null, imageUploadFailed: false };
     } finally {
       setIsSaving(false);

@@ -54,7 +54,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
         variants: product.variants,
       })));
     } catch {
-      setError("Unable to load sales quote detail.");
+      setError("No se pudieron cargar los detalles de la cotización de venta.");
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +68,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
     try {
       await operation();
     } catch {
-      setError("Unable to update sales quote.");
+      setError("No se pudo actualizar la cotización de venta.");
     } finally {
       setIsSaving(false);
     }
@@ -79,7 +79,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
       await withMutationState(async () => {
         const response = await salesQuotesService.update(quoteId, payload);
         setQuote(response.data);
-        setSuccessMessage("Quote header updated successfully.");
+        setSuccessMessage("Encabezado de cotización actualizado correctamente.");
       });
     },
     [quoteId, withMutationState],
@@ -91,7 +91,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
         await salesQuotesService.addItem(quoteId, payload);
         const detail = await salesQuotesService.getById(quoteId);
         setQuote(detail.data);
-        setSuccessMessage("Quote item added successfully.");
+        setSuccessMessage("Artículo de cotización agregado correctamente.");
       });
     },
     [quoteId, withMutationState],
@@ -103,7 +103,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
         await salesQuotesService.updateItem(quoteId, itemId, payload);
         const detail = await salesQuotesService.getById(quoteId);
         setQuote(detail.data);
-        setSuccessMessage("Quote item updated successfully.");
+        setSuccessMessage("Artículo de cotización actualizado correctamente.");
       });
     },
     [quoteId, withMutationState],
@@ -115,7 +115,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
         await salesQuotesService.deleteItem(quoteId, itemId);
         const detail = await salesQuotesService.getById(quoteId);
         setQuote(detail.data);
-        setSuccessMessage("Quote item deleted successfully.");
+        setSuccessMessage("Artículo de cotización eliminado correctamente.");
       });
     },
     [quoteId, withMutationState],
@@ -126,7 +126,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
       await salesQuotesService.recalculate(quoteId);
       const detail = await salesQuotesService.getById(quoteId);
       setQuote(detail.data);
-      setSuccessMessage("Quote totals recalculated successfully.");
+      setSuccessMessage("Totales de cotización recalculados correctamente.");
     });
   }, [quoteId, withMutationState]);
 
@@ -142,7 +142,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
       setSuccessMessage(response.message);
       return response.data;
     } catch {
-      setError("Unable to complete sale from this quote.");
+      setError("No se pudo completar la venta desde esta cotización.");
       return null;
     } finally {
       setIsSaving(false);

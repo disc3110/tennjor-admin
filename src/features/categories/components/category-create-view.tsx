@@ -54,7 +54,7 @@ export function CategoryCreateView() {
     if (category) {
       if (imageUploadFailed) {
         window.alert(
-          "Category created, but one or more image uploads failed. You can retry on the edit page.",
+          "La categoría se creó, pero falló una o más cargas de imagen. Puedes reintentar en la página de edición.",
         );
       }
       router.replace(`/admin/categories/${category.id}`);
@@ -68,10 +68,10 @@ export function CategoryCreateView() {
         className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
       >
         <ArrowLeft className="size-4" />
-        Back to categories
+        Volver a categorías
       </Link>
 
-      <PageHeader title="Create Category" subtitle="Create a category for storefront grouping." />
+      <PageHeader title="Crear categoría" subtitle="Crea una categoría para agrupar productos en tienda." />
 
       {error ? (
         <Card>
@@ -92,26 +92,26 @@ export function CategoryCreateView() {
           isActive: true,
         }}
         isSaving={isSaving}
-        submitLabel="Create Category"
+        submitLabel="Crear categoría"
         onSubmit={handleSubmit}
       />
 
       <Card>
-        <h2 className="text-lg font-semibold text-slate-900">Category Images (Optional)</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Imágenes de categoría (opcional)</h2>
         <p className="mt-2 text-sm text-slate-600">
-          Images are uploaded after category creation through backend-managed media routes.
+          Las imágenes se cargan después de crear la categoría mediante rutas de media gestionadas por backend.
         </p>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {[
             {
-              label: "Web Image",
+              label: "Imagen web",
               file: webImageFile,
               preview: webPreview,
               setFile: setWebImageFile,
             },
             {
-              label: "Mobile Image",
+              label: "Imagen móvil",
               file: mobileImageFile,
               preview: mobilePreview,
               setFile: setMobileImageFile,
@@ -129,7 +129,7 @@ export function CategoryCreateView() {
                 disabled={isSaving}
               />
               <p className="mt-2 truncate text-xs text-slate-500">
-                {slot.file ? slot.file.name : "No file selected"}
+                {slot.file ? slot.file.name : "Ningún archivo seleccionado"}
               </p>
               {slot.preview ? (
                 <>
@@ -142,7 +142,7 @@ export function CategoryCreateView() {
                 </>
               ) : (
                 <div className="mt-2 flex h-24 items-center justify-center rounded bg-slate-50 text-xs text-slate-400">
-                  No preview
+                  Sin vista previa
                 </div>
               )}
             </div>

@@ -66,12 +66,12 @@ export function ProductVariantsTable({
       <table className="min-w-full divide-y divide-slate-200">
         <thead>
           <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <th className="px-4 py-3">Size</th>
+            <th className="px-4 py-3">Talla</th>
             <th className="px-4 py-3">Color</th>
             <th className="px-4 py-3">SKU</th>
             <th className="px-4 py-3">Stock</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3 text-right">Actions</th>
+            <th className="px-4 py-3">Estado</th>
+            <th className="px-4 py-3 text-right">Acciones</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">
@@ -138,7 +138,7 @@ export function ProductVariantsTable({
                           setDraft({ ...draft, isActive: event.target.checked })
                         }
                       />
-                      Active
+                      Activa
                     </label>
                   ) : (
                     <ProductStatusBadge isActive={variant.isActive} />
@@ -149,35 +149,35 @@ export function ProductVariantsTable({
                     {isEditing ? (
                       <>
                         <Button variant="secondary" onClick={cancelEdit}>
-                          Cancel
+                          Cancelar
                         </Button>
                         <Button disabled={isSaving} onClick={saveEdit}>
-                          Save
+                          Guardar
                         </Button>
                       </>
                     ) : (
                       <>
                         <Button variant="ghost" onClick={() => startEdit(variant)}>
-                          Edit
+                          Editar
                         </Button>
                         <Button
                           variant="secondary"
                           disabled={isSaving}
                           onClick={() => onToggleStatus(variant)}
                         >
-                          {variant.isActive ? "Deactivate" : "Activate"}
+                          {variant.isActive ? "Desactivar" : "Activar"}
                         </Button>
                         <Button
                           variant="ghost"
                           disabled={isSaving}
                           onClick={() => {
                             const accepted = window.confirm(
-                              "Delete this variant? This action cannot be undone.",
+                              "¿Eliminar esta variante? Esta acción no se puede deshacer.",
                             );
                             if (accepted) onDelete(variant.id);
                           }}
                         >
-                          Delete
+                          Eliminar
                         </Button>
                       </>
                     )}

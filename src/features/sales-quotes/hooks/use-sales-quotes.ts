@@ -33,7 +33,7 @@ export function useSalesQuotes(query: GetInternalSaleQuotesQuery): UseSalesQuote
       setQuotes(response.data);
       setMeta(response.meta);
     } catch {
-      setError("Unable to load sales quotes right now.");
+      setError("No se pudieron cargar las cotizaciones de venta en este momento.");
     } finally {
       setIsLoading(false);
     }

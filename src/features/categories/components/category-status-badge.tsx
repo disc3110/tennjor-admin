@@ -14,7 +14,7 @@ export function CategoryStatusBadge({ isActive }: CategoryStatusBadgeProps) {
           : "bg-slate-100 text-slate-600 ring-slate-200",
       )}
     >
-      {isActive ? "Active" : "Inactive"}
+      {isActive ? "Activa" : "Inactiva"}
     </span>
   );
 }

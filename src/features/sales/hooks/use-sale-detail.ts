@@ -24,7 +24,7 @@ export function useSaleDetail(saleId: string): UseSaleDetailResult {
       const response = await salesService.getById(saleId);
       setSale(response.data);
     } catch {
-      setError("Unable to load completed sale detail.");
+      setError("No se pudieron cargar los detalles de la venta.");
     } finally {
       setIsLoading(false);
     }

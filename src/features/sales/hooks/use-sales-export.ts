@@ -27,7 +27,7 @@ export function useSalesExport(): UseSalesExportResult {
       );
       downloadBlobFile(response.blob, filename);
     } catch {
-      setExportError("Unable to export sales CSV right now.");
+      setExportError("No se pudo exportar el CSV de ventas en este momento.");
     } finally {
       setIsExporting(false);
     }

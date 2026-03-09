@@ -18,7 +18,7 @@ export function SaleDetailView({ saleId }: SaleDetailViewProps) {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <PageHeader title="Sale Detail" subtitle="Loading sale information..." />
+        <PageHeader title="Detalle de venta" subtitle="Cargando información de la venta..." />
         <Card className="h-56 animate-pulse bg-slate-100" />
       </section>
     );
@@ -27,8 +27,8 @@ export function SaleDetailView({ saleId }: SaleDetailViewProps) {
   if (!sale) {
     return (
       <Card className="py-14 text-center">
-        <h2 className="text-lg font-semibold text-slate-900">Sale not found</h2>
-        <p className="mt-2 text-sm text-slate-500">The sale may have been removed.</p>
+        <h2 className="text-lg font-semibold text-slate-900">Venta no encontrada</h2>
+        <p className="mt-2 text-sm text-slate-500">Es posible que la venta haya sido eliminada.</p>
       </Card>
     );
   }
@@ -40,12 +40,12 @@ export function SaleDetailView({ saleId }: SaleDetailViewProps) {
         className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
       >
         <ArrowLeft className="size-4" />
-        Back to sales
+        Volver a ventas
       </Link>
 
       <PageHeader
         title={sale.saleNumber}
-        subtitle={`Completed ${formatDateTime(sale.completedAt)}`}
+        subtitle={`Completada ${formatDateTime(sale.completedAt)}`}
         action={<SaleStatusBadge status={sale.status} />}
       />
 
@@ -58,44 +58,44 @@ export function SaleDetailView({ saleId }: SaleDetailViewProps) {
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">
           <Card className="space-y-3">
-            <h2 className="text-lg font-semibold text-slate-900">Customer Information</h2>
-            <InfoRow label="Name" value={sale.customerName} />
-            <InfoRow label="Phone" value={sale.customerPhone ?? "--"} />
-            <InfoRow label="Email" value={sale.customerEmail ?? "--"} />
-            <InfoRow label="City" value={sale.customerCity ?? "--"} />
-            <InfoRow label="Currency" value={sale.currency} />
-            <InfoRow label="Created" value={formatDateTime(sale.createdAt)} />
-            <InfoRow label="Updated" value={formatDateTime(sale.updatedAt)} />
-            <InfoRow label="Completed" value={formatDateTime(sale.completedAt)} />
+            <h2 className="text-lg font-semibold text-slate-900">Información del cliente</h2>
+            <InfoRow label="Nombre" value={sale.customerName} />
+            <InfoRow label="Teléfono" value={sale.customerPhone ?? "--"} />
+            <InfoRow label="Correo" value={sale.customerEmail ?? "--"} />
+            <InfoRow label="Ciudad" value={sale.customerCity ?? "--"} />
+            <InfoRow label="Moneda" value={sale.currency} />
+            <InfoRow label="Creada" value={formatDateTime(sale.createdAt)} />
+            <InfoRow label="Actualizada" value={formatDateTime(sale.updatedAt)} />
+            <InfoRow label="Completada" value={formatDateTime(sale.completedAt)} />
             <InfoRow
-              label="Quote"
+              label="Cotización"
               value={sale.quote ? `${sale.quote.code} (${sale.quote.status})` : "--"}
             />
             <InfoRow
-              label="Created By"
+              label="Creada por"
               value={sale.createdBy ? `${sale.createdBy.name} (${sale.createdBy.email})` : "--"}
             />
             {sale.notes ? (
               <div className="rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
-                <p className="font-medium text-slate-900">Notes</p>
+                <p className="font-medium text-slate-900">Notas</p>
                 <p className="mt-1">{sale.notes}</p>
               </div>
             ) : null}
           </Card>
 
           <Card className="space-y-3">
-            <h2 className="text-lg font-semibold text-slate-900">Item Snapshot</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Resumen de artículos</h2>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-200">
                 <thead>
                   <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <th className="px-3 py-2">Product</th>
-                    <th className="px-3 py-2">Variant</th>
-                    <th className="px-3 py-2">Qty</th>
-                    <th className="px-3 py-2">Unit Price</th>
-                    <th className="px-3 py-2">Unit Cost</th>
-                    <th className="px-3 py-2">Revenue</th>
-                    <th className="px-3 py-2">Profit</th>
+                    <th className="px-3 py-2">Producto</th>
+                    <th className="px-3 py-2">Variante</th>
+                    <th className="px-3 py-2">Cant.</th>
+                    <th className="px-3 py-2">Precio unitario</th>
+                    <th className="px-3 py-2">Costo unitario</th>
+                    <th className="px-3 py-2">Ingresos</th>
+                    <th className="px-3 py-2">Ganancia</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -125,13 +125,13 @@ export function SaleDetailView({ saleId }: SaleDetailViewProps) {
         </div>
 
         <Card className="space-y-3">
-          <h2 className="text-lg font-semibold text-slate-900">Totals</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Totales</h2>
           <InfoRow label="Subtotal" value={formatMoney(sale.subtotal, sale.currency)} />
-          <InfoRow label="Discount" value={formatMoney(sale.discountTotal, sale.currency)} />
-          <InfoRow label="Revenue" value={formatMoney(sale.totalRevenue, sale.currency)} />
-          <InfoRow label="Cost" value={formatMoney(sale.totalCost, sale.currency)} />
-          <InfoRow label="Profit" value={formatMoney(sale.totalProfit, sale.currency)} />
-          <InfoRow label="Margin" value={formatPercent(sale.marginPct)} />
+          <InfoRow label="Descuento" value={formatMoney(sale.discountTotal, sale.currency)} />
+          <InfoRow label="Ingresos" value={formatMoney(sale.totalRevenue, sale.currency)} />
+          <InfoRow label="Costo" value={formatMoney(sale.totalCost, sale.currency)} />
+          <InfoRow label="Ganancia" value={formatMoney(sale.totalProfit, sale.currency)} />
+          <InfoRow label="Margen" value={formatPercent(sale.marginPct)} />
         </Card>
       </div>
     </section>

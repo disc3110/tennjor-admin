@@ -63,7 +63,7 @@ export function useDashboardData(): UseDashboardDataResult {
         recentSales: recentSales.data,
       });
     } catch {
-      setError("Unable to load dashboard metrics right now.");
+      setError("No se pudieron cargar las métricas del panel en este momento.");
     } finally {
       setIsLoading(false);
     }

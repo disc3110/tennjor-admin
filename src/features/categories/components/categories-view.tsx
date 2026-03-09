@@ -59,8 +59,8 @@ export function CategoriesView() {
   return (
     <section className="space-y-6">
       <PageHeader
-        title="Categories"
-        subtitle="Manage storefront category structure and visibility."
+        title="Categorías"
+        subtitle="Gestiona la estructura y visibilidad de categorías en tienda."
         action={
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Link
@@ -68,7 +68,7 @@ export function CategoriesView() {
               className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition-colors hover:bg-slate-700"
             >
               <Plus className="size-4" />
-              New Category
+              Nueva categoría
             </Link>
             <Button
               variant="secondary"
@@ -89,7 +89,7 @@ export function CategoriesView() {
               }}
               className="w-full sm:w-auto"
             >
-              {isExporting ? "Exporting..." : "Export CSV"}
+              {isExporting ? "Exportando..." : "Exportar CSV"}
             </Button>
             <Button
               variant="secondary"
@@ -101,7 +101,7 @@ export function CategoriesView() {
               }}
               className="w-full sm:w-auto"
             >
-              Refresh
+              Actualizar
             </Button>
           </div>
         }
@@ -120,19 +120,19 @@ export function CategoriesView() {
               variant={statusFilter === "all" ? "primary" : "secondary"}
               onClick={() => updateQuery({ status: "all", search: searchQuery })}
             >
-              All
+              Todas
             </Button>
             <Button
               variant={statusFilter === "active" ? "primary" : "secondary"}
               onClick={() => updateQuery({ status: "active", search: searchQuery })}
             >
-              Active
+              Activas
             </Button>
             <Button
               variant={statusFilter === "inactive" ? "primary" : "secondary"}
               onClick={() => updateQuery({ status: "inactive", search: searchQuery })}
             >
-              Inactive
+              Inactivas
             </Button>
           </div>
 
@@ -140,11 +140,11 @@ export function CategoriesView() {
             <Input
               name="search"
               defaultValue={searchQuery}
-              placeholder="Search by category name or slug"
+              placeholder="Buscar por nombre o slug de categoría"
               className="h-10"
             />
             <Button type="submit" variant="secondary" iconLeft={<Search className="size-4" />}>
-              Search
+              Buscar
             </Button>
           </form>
         </div>
@@ -154,7 +154,7 @@ export function CategoriesView() {
 
       {!isLoading && error ? (
         <Card className="py-14 text-center">
-          <h2 className="text-lg font-semibold text-slate-900">Could not load categories</h2>
+          <h2 className="text-lg font-semibold text-slate-900">No se pudieron cargar las categorías</h2>
           <p className="mt-2 text-sm text-slate-500">{error}</p>
         </Card>
       ) : null}

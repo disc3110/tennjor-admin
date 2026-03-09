@@ -19,9 +19,9 @@ export function DashboardView() {
     <section className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Dashboard</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Panel de control</h1>
           <p className="text-sm text-slate-500">
-            Real-time admin overview for quotes, catalog, and sales performance.
+            Resumen en tiempo real de cotizaciones, catálogo y rendimiento de ventas.
           </p>
         </div>
 
@@ -35,7 +35,7 @@ export function DashboardView() {
               });
             }}
           >
-            Refresh
+            Actualizar
           </Button>
           <Button
             variant="secondary"
@@ -48,7 +48,7 @@ export function DashboardView() {
             }}
             className="w-full sm:w-auto"
           >
-            {isExporting ? "Exporting..." : "Export CSV"}
+            {isExporting ? "Exportando..." : "Exportar CSV"}
           </Button>
         </div>
       </div>
@@ -71,60 +71,60 @@ export function DashboardView() {
         <>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <SummaryCard
-              title="Total Products"
+              title="Total de productos"
               value={String(data.totalProducts)}
-              helperText="From admin products catalog"
+              helperText="Del catálogo de productos admin"
             />
             <SummaryCard
-              title="Active Categories"
+              title="Categorías activas"
               value={String(data.activeCategories)}
-              helperText="Storefront-visible category groups"
+              helperText="Grupos visibles en la tienda"
             />
             <SummaryCard
-              title="Total Quote Requests"
+              title="Total de solicitudes"
               value={String(data.totalQuotes)}
-              helperText="All quote requests tracked"
+              helperText="Todas las solicitudes registradas"
             />
             <SummaryCard
-              title="Pending Review"
+              title="Pendientes de revisión"
               value={String(data.newQuotes)}
-              helperText="Quote requests with NEW status"
+              helperText="Solicitudes con estado NEW"
             />
             <SummaryCard
-              title="Sales This Month"
+              title="Ventas este mes"
               value={String(data.monthlySalesStats.salesCount)}
-              helperText="Completed sales in current month"
+              helperText="Ventas completadas del mes actual"
             />
             <SummaryCard
-              title="Profit This Month"
+              title="Ganancia este mes"
               value={formatMoney(data.monthlySalesStats.totalProfit, monthlyCurrency)}
-              helperText="Total profit in current month"
+              helperText="Ganancia total del mes actual"
             />
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <Card className="space-y-1">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                Revenue (Month)
+                Ingresos del mes
               </p>
               <p className="text-2xl font-semibold text-slate-900">
                 {formatMoney(data.monthlySalesStats.totalRevenue, monthlyCurrency)}
               </p>
             </Card>
             <Card className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Cost (Month)</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Costo del mes</p>
               <p className="text-2xl font-semibold text-slate-900">
                 {formatMoney(data.monthlySalesStats.totalCost, monthlyCurrency)}
               </p>
             </Card>
             <Card className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Average Margin</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Margen promedio</p>
               <p className="text-2xl font-semibold text-slate-900">
                 {formatPercent(data.monthlySalesStats.averageMarginPct)}
               </p>
             </Card>
             <Card className="space-y-1">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Average Ticket</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Ticket promedio</p>
               <p className="text-2xl font-semibold text-slate-900">
                 {formatMoney(data.monthlySalesStats.averageTicket, monthlyCurrency)}
               </p>
@@ -133,7 +133,7 @@ export function DashboardView() {
 
           <div className="grid gap-6 xl:grid-cols-2">
             <Card>
-              <h2 className="text-lg font-semibold text-slate-900">Quote Status Breakdown</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Desglose por estado de cotización</h2>
               <div className="mt-4 space-y-2">
                 {Object.entries(data.quoteStatusBreakdown).map(([status, count]) => (
                   <div key={status} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
@@ -145,17 +145,17 @@ export function DashboardView() {
             </Card>
 
             <Card>
-              <h2 className="text-lg font-semibold text-slate-900">Top Requested Products</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Productos más solicitados</h2>
               <div className="mt-4 space-y-2">
                 {data.topRequestedProducts.length === 0 ? (
-                  <p className="text-sm text-slate-500">No quote demand data available.</p>
+                  <p className="text-sm text-slate-500">No hay datos de solicitudes.</p>
                 ) : (
                   data.topRequestedProducts.map((item) => (
                     <div key={item.productId} className="rounded-lg bg-slate-50 px-3 py-2">
                       <p className="text-sm font-semibold text-slate-900">{item.productName}</p>
                       <p className="text-xs text-slate-500">/{item.productSlug}</p>
                       <p className="mt-1 text-xs text-slate-600">
-                        Requested Qty: {item.totalRequestedQuantity} • Quote Lines: {item.totalQuoteLines}
+                        Cantidad solicitada: {item.totalRequestedQuantity} • Líneas: {item.totalQuoteLines}
                       </p>
                     </div>
                   ))
@@ -164,15 +164,15 @@ export function DashboardView() {
             </Card>
 
             <Card>
-              <h2 className="text-lg font-semibold text-slate-900">Top Selling Products (Month)</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Productos más vendidos (mes)</h2>
               <div className="mt-4 space-y-2">
                 {data.monthlySalesStats.topSellingProducts.length === 0 ? (
-                  <p className="text-sm text-slate-500">No completed sales data for this month.</p>
+                  <p className="text-sm text-slate-500">No hay ventas completadas este mes.</p>
                 ) : (
                   data.monthlySalesStats.topSellingProducts.map((item) => (
                     <div key={`sell-${item.productId}`} className="rounded-lg bg-slate-50 px-3 py-2">
                       <p className="text-sm font-semibold text-slate-900">{item.productName}</p>
-                      <p className="text-xs text-slate-500">Qty: {item.totalQuantity}</p>
+                      <p className="text-xs text-slate-500">Cant.: {item.totalQuantity}</p>
                     </div>
                   ))
                 )}
@@ -180,16 +180,16 @@ export function DashboardView() {
             </Card>
 
             <Card>
-              <h2 className="text-lg font-semibold text-slate-900">Top Profitable Products (Month)</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Productos más rentables (mes)</h2>
               <div className="mt-4 space-y-2">
                 {data.monthlySalesStats.topProfitableProducts.length === 0 ? (
-                  <p className="text-sm text-slate-500">No profit ranking data for this month.</p>
+                  <p className="text-sm text-slate-500">No hay datos de rentabilidad este mes.</p>
                 ) : (
                   data.monthlySalesStats.topProfitableProducts.map((item) => (
                     <div key={`profit-${item.productId}`} className="rounded-lg bg-slate-50 px-3 py-2">
                       <p className="text-sm font-semibold text-slate-900">{item.productName}</p>
                       <p className="text-xs text-slate-500">
-                        Profit: {formatMoney(item.totalProfit, monthlyCurrency)}
+                        Ganancia: {formatMoney(item.totalProfit, monthlyCurrency)}
                       </p>
                     </div>
                   ))
@@ -200,10 +200,10 @@ export function DashboardView() {
 
           <div className="grid gap-6 xl:grid-cols-2">
             <Card>
-              <h2 className="text-lg font-semibold text-slate-900">Recent Quote Requests</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Solicitudes recientes</h2>
               <div className="mt-4 space-y-2">
                 {data.recentQuotes.length === 0 ? (
-                  <p className="text-sm text-slate-500">No recent quote requests.</p>
+                  <p className="text-sm text-slate-500">No hay solicitudes recientes.</p>
                 ) : (
                   data.recentQuotes.map((quote) => (
                     <Link
@@ -222,10 +222,10 @@ export function DashboardView() {
             </Card>
 
             <Card>
-              <h2 className="text-lg font-semibold text-slate-900">Recent Completed Sales</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Ventas recientes</h2>
               <div className="mt-4 space-y-2">
                 {data.recentSales.length === 0 ? (
-                  <p className="text-sm text-slate-500">No recent completed sales.</p>
+                  <p className="text-sm text-slate-500">No hay ventas recientes.</p>
                 ) : (
                   data.recentSales.map((sale) => (
                     <Link

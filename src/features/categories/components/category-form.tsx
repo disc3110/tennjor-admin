@@ -43,7 +43,7 @@ export function CategoryForm({
       <form className="space-y-5" onSubmit={(event) => void handleSubmit(event)}>
         <div className="grid gap-4 md:grid-cols-2">
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Name</span>
+            <span className="text-sm font-medium text-slate-700">Nombre</span>
             <Input value={name} onChange={(event) => setName(event.target.value)} required />
           </label>
 
@@ -60,12 +60,12 @@ export function CategoryForm({
             onChange={(event) => setIsActive(event.target.checked)}
             className="size-4 rounded border-slate-300"
           />
-          <span className="text-sm font-medium text-slate-700">Category is active</span>
+          <span className="text-sm font-medium text-slate-700">La categoría está activa</span>
         </label>
 
         <div className="flex justify-end">
           <Button type="submit" disabled={isSaving}>
-            {isSaving ? "Saving..." : submitLabel}
+            {isSaving ? "Guardando..." : submitLabel}
           </Button>
         </div>
       </form>

@@ -32,7 +32,7 @@ export function useSalesQuoteCreate(): UseSalesQuoteCreateResult {
       setSuccessMessage(response.message);
       return response.data;
     } catch {
-      setError("Unable to create sales quote.");
+      setError("No se pudo crear la cotización de venta.");
       return null;
     } finally {
       setIsSaving(false);

@@ -28,7 +28,7 @@ function getImageHost(url: string) {
   try {
     return new URL(url).hostname;
   } catch {
-    return "Invalid URL";
+    return "URL inválida";
   }
 }
 
@@ -101,7 +101,7 @@ export function ProductImagesPanel({
 
   return (
     <Card>
-      <h2 className="text-lg font-semibold text-slate-900">Media</h2>
+      <h2 className="text-lg font-semibold text-slate-900">Multimedia</h2>
 
       <form className="mt-4 space-y-3 rounded-lg border border-slate-200 p-3" onSubmit={handleUpload}>
         <input
@@ -116,7 +116,7 @@ export function ProductImagesPanel({
           <Input
             value={alt}
             onChange={(event) => setAlt(event.target.value)}
-            placeholder="Alt text (optional)"
+            placeholder="Texto alternativo (opcional)"
           />
           <select
             value={priority}
@@ -132,14 +132,14 @@ export function ProductImagesPanel({
         </div>
         <div className="flex justify-end">
           <Button type="submit" disabled={!file || isSaving}>
-            {isSaving ? "Uploading..." : "Upload Image"}
+            {isSaving ? "Subiendo..." : "Subir imagen"}
           </Button>
         </div>
       </form>
 
       {images.length === 0 ? (
         <div className="mt-4 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-          <p className="text-sm text-slate-500">No images configured for this product.</p>
+          <p className="text-sm text-slate-500">No hay imágenes configuradas para este producto.</p>
         </div>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
@@ -161,7 +161,7 @@ export function ProductImagesPanel({
                 <Input
                   className="h-9"
                   value={getDraft(image).alt}
-                  placeholder={`Image ${index + 1} alt`}
+                  placeholder={`Alt de imagen ${index + 1}`}
                   onChange={(event) =>
                     setDrafts((current) => ({
                       ...current,
@@ -173,7 +173,7 @@ export function ProductImagesPanel({
                   }
                 />
                 <p className="text-xs text-slate-500">
-                  Order {image.order} • {getImageHost(image.url)}
+                  Orden {image.order} • {getImageHost(image.url)}
                 </p>
                 <p className="truncate text-xs text-slate-400">ID: {image.id}</p>
                 <select
@@ -211,7 +211,7 @@ export function ProductImagesPanel({
                       });
                     }}
                   >
-                    Save
+                    Guardar
                   </Button>
                   <Button
                     variant="ghost"
@@ -219,12 +219,12 @@ export function ProductImagesPanel({
                     disabled={isSaving}
                     onClick={() => {
                       const accepted = window.confirm(
-                        "Delete this image? This action cannot be undone.",
+                        "¿Eliminar esta imagen? Esta acción no se puede deshacer.",
                       );
                       if (accepted) onDeleteImage(image.id);
                     }}
                   >
-                    Delete Image
+                    Eliminar imagen
                   </Button>
                 </div>
               </div>

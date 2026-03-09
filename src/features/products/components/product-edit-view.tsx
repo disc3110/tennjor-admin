@@ -51,7 +51,7 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <PageHeader title="Edit Product" subtitle="Loading product data..." />
+        <PageHeader title="Editar producto" subtitle="Cargando datos del producto..." />
         <Card className="h-56 animate-pulse bg-slate-100" />
       </section>
     );
@@ -60,9 +60,9 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
   if (!product) {
     return (
       <Card className="py-14 text-center">
-        <h2 className="text-lg font-semibold text-slate-900">Product not found</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Producto no encontrado</h2>
         <p className="mt-2 text-sm text-slate-500">
-          The product may have been removed or is unavailable.
+          Es posible que el producto haya sido eliminado o no esté disponible.
         </p>
       </Card>
     );
@@ -76,7 +76,7 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
         >
           <ArrowLeft className="size-4" />
-          Back to products
+          Volver a productos
         </Link>
         <div className="flex gap-2">
           <Button
@@ -84,7 +84,7 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
             disabled={isSaving}
             onClick={() => {
               const accepted = window.confirm(
-                "Delete this product? It cannot be undone and may fail if linked to quote requests.",
+                "¿Eliminar este producto? Esta acción no se puede deshacer y puede fallar si está vinculado a solicitudes de cotización.",
               );
               if (!accepted) return;
 
@@ -95,7 +95,7 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
                 });
             }}
           >
-            Delete
+            Eliminar
           </Button>
           <Button
             variant="secondary"
@@ -106,14 +106,14 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
               });
             }}
           >
-            Reload
+            Recargar
           </Button>
         </div>
       </div>
 
       <PageHeader
-        title={`Edit ${product.name}`}
-        subtitle={`Updated ${formatDate(product.updatedAt)}`}
+        title={`Editar ${product.name}`}
+        subtitle={`Actualizado ${formatDate(product.updatedAt)}`}
         action={<ProductStatusBadge isActive={product.isActive} />}
       />
 
@@ -142,22 +142,22 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
             }}
             categories={categories}
             isSaving={isSaving}
-            submitLabel="Save Changes"
+            submitLabel="Guardar cambios"
             onSubmit={handleSubmit}
           />
 
           <Card>
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">Variants Summary</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Resumen de variantes</h2>
               <Link
                 href={`/admin/products/${product.id}/variants`}
                 className="text-sm font-medium text-slate-600 underline-offset-4 hover:text-slate-900 hover:underline"
               >
-                Manage Variants
+                Gestionar variantes
               </Link>
             </div>
             {product.variants.length === 0 ? (
-              <p className="mt-2 text-sm text-slate-500">No variants configured for this product.</p>
+              <p className="mt-2 text-sm text-slate-500">No hay variantes configuradas para este producto.</p>
             ) : (
               <div className="mt-3 space-y-2">
                 {product.variants.map((variant) => (
@@ -169,7 +169,7 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
                       {variant.size} / {variant.color} {variant.sku ? `(${variant.sku})` : ""}
                     </p>
                     <p className="text-slate-500">
-                      Stock: {variant.stock} • {variant.isActive ? "Active" : "Inactive"}
+                      Stock: {variant.stock} • {variant.isActive ? "Activo" : "Inactivo"}
                     </p>
                   </div>
                 ))}

@@ -33,7 +33,7 @@ export function useSalesStats(query: GetSalesStatsQuery): UseSalesStatsResult {
       });
       setStats(response.data);
     } catch {
-      setError("Unable to load sales stats right now.");
+      setError("No se pudieron cargar las estadísticas de ventas en este momento.");
     } finally {
       setIsLoading(false);
     }

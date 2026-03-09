@@ -42,12 +42,12 @@ export function SalesQuoteCreateView() {
         className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
       >
         <ArrowLeft className="size-4" />
-        Back to sales quotes
+        Volver a cotizaciones de venta
       </Link>
 
       <PageHeader
-        title="Create Sales Quote"
-        subtitle="Start a draft internal quote and refine it with line items."
+        title="Crear cotización de venta"
+        subtitle="Inicia una cotización interna en borrador y ajústala con líneas."
       />
 
       {error ? (
@@ -72,47 +72,47 @@ export function SalesQuoteCreateView() {
           }}
         >
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Customer Name</span>
-            <Input name="customerName" required placeholder="Customer name" />
+            <span className="text-sm font-medium text-slate-700">Nombre del cliente</span>
+            <Input name="customerName" required placeholder="Nombre del cliente" />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Currency</span>
+            <span className="text-sm font-medium text-slate-700">Moneda</span>
             <Input name="currency" defaultValue="MXN" placeholder="MXN" />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Customer Phone</span>
+            <span className="text-sm font-medium text-slate-700">Teléfono del cliente</span>
             <Input name="customerPhone" placeholder="+52..." />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Customer Email</span>
-            <Input name="customerEmail" type="email" placeholder="customer@email.com" />
+            <span className="text-sm font-medium text-slate-700">Correo del cliente</span>
+            <Input name="customerEmail" type="email" placeholder="correo@ejemplo.com" />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Customer City</span>
+            <span className="text-sm font-medium text-slate-700">Ciudad del cliente</span>
             <Input name="customerCity" placeholder="Monterrey" />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm font-medium text-slate-700">Public Quote Request ID (Optional)</span>
-            <Input name="publicQuoteRequestId" placeholder="quote-request-id" />
+            <span className="text-sm font-medium text-slate-700">ID de solicitud pública (opcional)</span>
+            <Input name="publicQuoteRequestId" placeholder="id-solicitud-cotizacion" />
           </label>
 
           <label className="space-y-2 md:col-span-2">
-            <span className="text-sm font-medium text-slate-700">Notes</span>
+            <span className="text-sm font-medium text-slate-700">Notas</span>
             <textarea
               name="notes"
               className="min-h-24 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-              placeholder="Internal context or customer requirements"
+              placeholder="Contexto interno o requisitos del cliente"
             />
           </label>
 
           <div className="md:col-span-2 flex justify-end">
             <Button type="submit" disabled={isSaving}>
-              {isSaving ? "Creating..." : "Create Sales Quote"}
+              {isSaving ? "Creando..." : "Crear cotización de venta"}
             </Button>
           </div>
         </form>

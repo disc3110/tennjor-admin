@@ -17,7 +17,7 @@ function getStockSummary(product: ProductAdmin) {
   const activeVariants = product.variants.filter((variant) => variant.isActive).length;
   const totalStock = product.variants.reduce((sum, variant) => sum + variant.stock, 0);
 
-  return `${activeVariants}/${product.variants.length} active variants • ${totalStock} stock`;
+  return `${activeVariants}/${product.variants.length} variantes activas • ${totalStock} stock`;
 }
 
 export function ProductsTable({ products, isUpdating, onToggleStatus }: ProductsTableProps) {
@@ -26,12 +26,12 @@ export function ProductsTable({ products, isUpdating, onToggleStatus }: Products
       <table className="min-w-full divide-y divide-slate-200">
         <thead>
           <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <th className="px-4 py-3">Product</th>
-            <th className="px-4 py-3">Category</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Variants / Stock</th>
-            <th className="px-4 py-3">Updated</th>
-            <th className="px-4 py-3 text-right">Actions</th>
+            <th className="px-4 py-3">Producto</th>
+            <th className="px-4 py-3">Categoría</th>
+            <th className="px-4 py-3">Estado</th>
+            <th className="px-4 py-3">Variantes / Stock</th>
+            <th className="px-4 py-3">Actualizado</th>
+            <th className="px-4 py-3 text-right">Acciones</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">
@@ -53,14 +53,14 @@ export function ProductsTable({ products, isUpdating, onToggleStatus }: Products
                     href={`/admin/products/${product.id}`}
                     className="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
                   >
-                    Edit
+                    Editar
                   </Link>
                   <Button
                     variant="secondary"
                     disabled={isUpdating === product.id}
                     onClick={() => onToggleStatus(product)}
                   >
-                    {product.isActive ? "Deactivate" : "Activate"}
+                    {product.isActive ? "Desactivar" : "Activar"}
                   </Button>
                 </div>
               </td>

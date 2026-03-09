@@ -45,7 +45,7 @@ export function useProductCreate(): UseProductCreateResult {
       const response = await productsService.listCategories();
       setCategories(response.data);
     } catch {
-      setError("Unable to load categories.");
+      setError("No se pudieron cargar las categorías.");
     } finally {
       setIsLoading(false);
     }
@@ -72,11 +72,11 @@ export function useProductCreate(): UseProductCreateResult {
 
           try {
             await productsService.uploadProductImage(product.id, uploadPayload);
-            setSuccessMessage("Product and initial image created successfully.");
+            setSuccessMessage("Producto e imagen inicial creados correctamente.");
           } catch {
             imageUploadFailed = true;
             setSuccessMessage(
-              "Product created successfully, but initial image upload failed. You can retry on the edit page.",
+              "Producto creado correctamente, pero falló la carga de la imagen inicial. Puedes reintentar en la página de edición.",
             );
           }
         } else {
@@ -85,7 +85,7 @@ export function useProductCreate(): UseProductCreateResult {
 
         return { product, imageUploadFailed };
       } catch {
-        setError("Unable to create product.");
+        setError("No se pudo crear el producto.");
         return { product: null, imageUploadFailed: false };
       } finally {
         setIsSaving(false);

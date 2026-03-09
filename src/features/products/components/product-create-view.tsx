@@ -56,7 +56,7 @@ export function ProductCreateView() {
     if (product) {
       if (imageUploadFailed) {
         window.alert(
-          "Product created, but initial image upload failed. You can retry from the product edit page.",
+          "El producto se creó, pero falló la carga de la imagen inicial. Puedes reintentar desde la página de edición del producto.",
         );
       }
       router.replace(`/admin/products/${product.id}`);
@@ -66,7 +66,7 @@ export function ProductCreateView() {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <PageHeader title="New Product" subtitle="Loading form data..." />
+        <PageHeader title="Nuevo producto" subtitle="Cargando datos del formulario..." />
         <Card className="h-56 animate-pulse bg-slate-100" />
       </section>
     );
@@ -80,7 +80,7 @@ export function ProductCreateView() {
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
         >
           <ArrowLeft className="size-4" />
-          Back to products
+          Volver a productos
         </Link>
         <Button
           variant="secondary"
@@ -91,13 +91,13 @@ export function ProductCreateView() {
             });
           }}
         >
-          Reload
+          Recargar
         </Button>
       </div>
 
       <PageHeader
-        title="Create Product"
-        subtitle="Create the base product and optionally upload one initial image."
+        title="Crear producto"
+        subtitle="Crea el producto base y opcionalmente sube una imagen inicial."
       />
 
       {error ? (
@@ -124,16 +124,15 @@ export function ProductCreateView() {
             }}
             categories={categories}
             isSaving={isSaving}
-            submitLabel="Create Product"
+            submitLabel="Crear producto"
             onSubmit={handleSubmit}
           />
         </div>
 
         <Card>
-          <h2 className="text-lg font-semibold text-slate-900">Initial Image (Optional)</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Imagen inicial (opcional)</h2>
           <p className="mt-2 text-sm text-slate-600">
-            If selected, the image will be uploaded right after product creation using the backend
-            upload route.
+            Si se selecciona, la imagen se subirá inmediatamente después de crear el producto usando la ruta de subida del backend.
           </p>
 
           <div className="mt-4 space-y-3">
@@ -145,10 +144,10 @@ export function ProductCreateView() {
               disabled={isSaving}
             />
             <p className="text-xs text-slate-500">
-              {initialImageFile ? `Selected: ${initialImageFile.name}` : "No file selected"}
+              {initialImageFile ? `Seleccionado: ${initialImageFile.name}` : "Ningún archivo seleccionado"}
             </p>
             <Input
-              placeholder="Alt text (optional)"
+              placeholder="Texto alternativo (opcional)"
               value={initialImageAlt}
               onChange={(event) => setInitialImageAlt(event.target.value)}
               disabled={isSaving}

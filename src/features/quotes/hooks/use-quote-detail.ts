@@ -35,7 +35,7 @@ export function useQuoteDetail(id: string): UseQuoteDetailResult {
       const response = await quotesService.getById(id);
       setQuote(response.data);
     } catch {
-      setError("Unable to load quote details.");
+      setError("No se pudieron cargar los detalles de la cotización.");
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +48,7 @@ export function useQuoteDetail(id: string): UseQuoteDetailResult {
       setSuccessMessage(null);
 
       try {
-        const actorName = user?.name?.trim() || user?.email?.trim() || "Admin";
+        const actorName = user?.name?.trim() || user?.email?.trim() || "Administrador";
         const trimmedNote = payload.internalNotes?.trim();
         const formattedPayload = trimmedNote
           ? { ...payload, internalNotes: `${actorName}: ${trimmedNote}` }
@@ -58,7 +58,7 @@ export function useQuoteDetail(id: string): UseQuoteDetailResult {
         setQuote(response.data);
         setSuccessMessage(response.message);
       } catch {
-        setError("Unable to update quote status.");
+        setError("No se pudo actualizar el estado de la cotización.");
       } finally {
         setIsSaving(false);
       }

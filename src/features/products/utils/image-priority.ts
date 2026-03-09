@@ -8,10 +8,10 @@ export const productImagePriorityOptions: Array<{
   value: ProductImagePriority;
   label: string;
 }> = [
-  { value: "cover", label: "Cover" },
-  { value: "important", label: "Important image" },
-  { value: "secondary", label: "Secondary image" },
-  { value: "detail", label: "Detail image" },
+  { value: "cover", label: "Portada" },
+  { value: "important", label: "Imagen importante" },
+  { value: "secondary", label: "Imagen secundaria" },
+  { value: "detail", label: "Imagen de detalle" },
 ];
 
 function nextAvailableOrder(existingOrders: number[], startFrom: number) {

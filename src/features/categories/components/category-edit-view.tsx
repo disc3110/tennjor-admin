@@ -51,7 +51,7 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
   if (isLoading) {
     return (
       <section className="space-y-6">
-        <PageHeader title="Edit Category" subtitle="Loading category data..." />
+        <PageHeader title="Editar categoría" subtitle="Cargando datos de la categoría..." />
         <Card className="h-56 animate-pulse bg-slate-100" />
       </section>
     );
@@ -60,9 +60,9 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
   if (!category) {
     return (
       <Card className="py-14 text-center">
-        <h2 className="text-lg font-semibold text-slate-900">Category not found</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Categoría no encontrada</h2>
         <p className="mt-2 text-sm text-slate-500">
-          The category may have been removed or is unavailable.
+          Es posible que la categoría haya sido eliminada o no esté disponible.
         </p>
       </Card>
     );
@@ -76,7 +76,7 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
         >
           <ArrowLeft className="size-4" />
-          Back to categories
+          Volver a categorías
         </Link>
         <div className="flex gap-2">
           <Button
@@ -84,7 +84,7 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
             disabled={isSaving}
             onClick={() => {
               const accepted = window.confirm(
-                "Delete this category? This can fail if linked products are referenced by quote requests.",
+                "¿Eliminar esta categoría? Esto puede fallar si sus productos vinculados están referenciados por solicitudes de cotización.",
               );
               if (!accepted) return;
 
@@ -95,7 +95,7 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
                 });
             }}
           >
-            Delete
+            Eliminar
           </Button>
           <Button
             variant="secondary"
@@ -106,14 +106,14 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
               });
             }}
           >
-            Reload
+            Recargar
           </Button>
         </div>
       </div>
 
       <PageHeader
-        title={`Edit ${category.name}`}
-        subtitle={`Updated ${formatDate(category.updatedAt)}`}
+        title={`Editar ${category.name}`}
+        subtitle={`Actualizada ${formatDate(category.updatedAt)}`}
         action={<CategoryStatusBadge isActive={category.isActive} />}
       />
 
@@ -139,18 +139,18 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
               isActive: category.isActive,
             }}
             isSaving={isSaving}
-            submitLabel="Save Changes"
+            submitLabel="Guardar cambios"
             onSubmit={handleSubmit}
           />
         </div>
 
         <Card>
-          <h2 className="text-lg font-semibold text-slate-900">Category Media</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Media de categoría</h2>
           <div className="mt-3 space-y-3">
             {[
               { label: "Web", slot: "web" as const, url: category.imageWebUrl, file: webFile },
               {
-                label: "Mobile",
+                label: "Móvil",
                 slot: "mobile" as const,
                 url: category.imageMobileUrl,
                 file: mobileFile,
@@ -171,7 +171,7 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
                     <p className="mt-2 truncate text-xs text-slate-400">{item.url}</p>
                   </>
                 ) : (
-                  <p className="mt-2 text-sm text-slate-500">No {item.label.toLowerCase()} image</p>
+                  <p className="mt-2 text-sm text-slate-500">Sin imagen {item.label.toLowerCase()}</p>
                 )}
                 <div className="mt-3 space-y-2">
                   <input
@@ -187,7 +187,7 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
                   />
                   <div className="flex items-center justify-between gap-2">
                     <p className="truncate text-xs text-slate-500">
-                      {item.file ? item.file.name : "No file selected"}
+                      {item.file ? item.file.name : "Ningún archivo seleccionado"}
                     </p>
                     <Button
                       variant="secondary"
@@ -205,7 +205,7 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
                           });
                       }}
                     >
-                      {item.url ? "Replace" : "Upload"}
+                      {item.url ? "Reemplazar" : "Subir"}
                     </Button>
                   </div>
                 </div>
@@ -215,12 +215,12 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
         </Card>
 
         <Card>
-          <h2 className="text-lg font-semibold text-slate-900">Products Snapshot</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Resumen de productos</h2>
           <p className="mt-2 text-sm text-slate-600">
-            {category._count.products} product(s) currently linked to this category.
+            {category._count.products} producto(s) vinculados actualmente a esta categoría.
           </p>
           {category.products.length === 0 ? (
-            <p className="mt-3 text-sm text-slate-500">No products linked yet.</p>
+            <p className="mt-3 text-sm text-slate-500">Aún no hay productos vinculados.</p>
           ) : (
             <div className="mt-3 max-h-80 space-y-2 overflow-y-auto pr-1">
               {category.products.map((product) => (
@@ -241,21 +241,21 @@ export function CategoryEditView({ categoryId }: CategoryEditViewProps) {
                       </>
                     ) : (
                       <div className="flex h-14 w-14 items-center justify-center rounded bg-slate-100 text-xs text-slate-400">
-                        No image
+                        Sin imagen
                       </div>
                     )}
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-slate-800">{product.name}</p>
                       <p className="mt-1 truncate text-xs text-slate-500">{product.slug}</p>
                       <p className="mt-1 text-xs text-slate-500">
-                        {product.variants.length} variant(s)
+                        {product.variants.length} variante(s)
                       </p>
                     </div>
                   </div>
                 </Link>
               ))}
               {category.products.length > 12 ? (
-                <p className="text-xs text-slate-500">Scroll to view more products.</p>
+                <p className="text-xs text-slate-500">Desplázate para ver más productos.</p>
               ) : null}
             </div>
           )}

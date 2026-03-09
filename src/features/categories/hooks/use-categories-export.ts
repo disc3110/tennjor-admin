@@ -32,7 +32,7 @@ export function useCategoriesExport(): UseCategoriesExportResult {
 
       downloadBlobFile(response.blob, filename);
     } catch {
-      setExportError("Unable to export categories CSV right now.");
+      setExportError("No se pudo exportar el CSV de categorías en este momento.");
     } finally {
       setIsExporting(false);
     }

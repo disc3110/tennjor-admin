@@ -33,7 +33,7 @@ export function useProductsExport(): UseProductsExportResult {
 
       downloadBlobFile(response.blob, filename);
     } catch {
-      setExportError("Unable to export products CSV right now.");
+      setExportError("No se pudo exportar el CSV de productos en este momento.");
     } finally {
       setIsExporting(false);
     }

@@ -69,8 +69,8 @@ export function ProductsView() {
   return (
     <section className="space-y-6">
       <PageHeader
-        title="Products"
-        subtitle="Manage catalog visibility, statuses, and product overview."
+        title="Productos"
+        subtitle="Gestiona visibilidad, estados y resumen del catálogo."
         action={
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Link
@@ -78,7 +78,7 @@ export function ProductsView() {
               className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition-colors hover:bg-slate-700"
             >
               <Plus className="size-4" />
-              New Product
+              Nuevo producto
             </Link>
             <Button
               variant="secondary"
@@ -100,7 +100,7 @@ export function ProductsView() {
               }}
               className="w-full sm:w-auto"
             >
-              {isExporting ? "Exporting..." : "Export CSV"}
+              {isExporting ? "Exportando..." : "Exportar CSV"}
             </Button>
             <Button
               variant="secondary"
@@ -112,7 +112,7 @@ export function ProductsView() {
               }}
               className="w-full sm:w-auto"
             >
-              Refresh
+              Actualizar
             </Button>
           </div>
         }
@@ -131,19 +131,19 @@ export function ProductsView() {
               variant={statusFilter === "all" ? "primary" : "secondary"}
               onClick={() => updateQuery({ status: "all", search: searchQuery })}
             >
-              All
+              Todos
             </Button>
             <Button
               variant={statusFilter === "active" ? "primary" : "secondary"}
               onClick={() => updateQuery({ status: "active", search: searchQuery })}
             >
-              Active
+              Activos
             </Button>
             <Button
               variant={statusFilter === "inactive" ? "primary" : "secondary"}
               onClick={() => updateQuery({ status: "inactive", search: searchQuery })}
             >
-              Inactive
+              Inactivos
             </Button>
           </div>
 
@@ -151,11 +151,11 @@ export function ProductsView() {
             <Input
               name="search"
               defaultValue={searchQuery}
-              placeholder="Search by product name or slug"
+              placeholder="Buscar por nombre o slug del producto"
               className="h-10"
             />
             <Button type="submit" variant="secondary" iconLeft={<Search className="size-4" />}>
-              Search
+              Buscar
             </Button>
           </form>
         </div>
@@ -167,11 +167,11 @@ export function ProductsView() {
           <p className="text-3xl font-semibold text-slate-900">{meta?.total ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Page</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Página</p>
           <p className="text-3xl font-semibold text-slate-900">{meta?.page ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total Pages</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total de páginas</p>
           <p className="text-3xl font-semibold text-slate-900">{meta?.totalPages ?? "--"}</p>
         </Card>
       </div>
@@ -180,7 +180,7 @@ export function ProductsView() {
 
       {!isLoading && error ? (
         <Card className="py-14 text-center">
-          <h2 className="text-lg font-semibold text-slate-900">Could not load products</h2>
+          <h2 className="text-lg font-semibold text-slate-900">No se pudieron cargar los productos</h2>
           <p className="mt-2 text-sm text-slate-500">{error}</p>
         </Card>
       ) : null}

@@ -35,7 +35,7 @@ export function useCategoryEdit(categoryId: string): UseCategoryEditResult {
       const response = await categoriesService.getById(categoryId);
       setCategory(response.data);
     } catch {
-      setError("Unable to load category details.");
+      setError("No se pudieron cargar los detalles de la categoría.");
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +59,7 @@ export function useCategoryEdit(categoryId: string): UseCategoryEditResult {
         );
         setSuccessMessage(response.message);
       } catch {
-        setError("Unable to update category.");
+        setError("No se pudo actualizar la categoría.");
       } finally {
         setIsSaving(false);
       }
@@ -76,13 +76,13 @@ export function useCategoryEdit(categoryId: string): UseCategoryEditResult {
       const response = await categoriesService.delete(categoryId);
       if (response.data.cloudinaryCleanupPendingPublicIds.length > 0) {
         setSuccessMessage(
-          `Category deleted. Pending cloud cleanup: ${response.data.cloudinaryCleanupPendingPublicIds.length} image(s).`,
+          `Categoría eliminada. Limpieza de nube pendiente: ${response.data.cloudinaryCleanupPendingPublicIds.length} imagen(es).`,
         );
       } else {
-        setSuccessMessage("Category deleted successfully.");
+        setSuccessMessage("Categoría eliminada correctamente.");
       }
     } catch {
-      setError("Unable to delete category. It may contain products linked to quote requests.");
+      setError("No se pudo eliminar la categoría. Puede contener productos vinculados a solicitudes de cotización.");
       throw new Error("delete_failed");
     } finally {
       setIsSaving(false);
@@ -118,7 +118,7 @@ export function useCategoryEdit(categoryId: string): UseCategoryEditResult {
           setSuccessMessage(response.message);
         }
       } catch {
-        setError("Unable to upload category image.");
+        setError("No se pudo subir la imagen de la categoría.");
       } finally {
         setIsSaving(false);
       }

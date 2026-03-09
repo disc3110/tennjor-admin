@@ -25,36 +25,36 @@ export function SalesStatsPanel({ stats, isLoading, error, currency }: SalesStat
   if (!stats) {
     return (
       <Card>
-        <p className="text-sm text-slate-500">No stats available.</p>
+        <p className="text-sm text-slate-500">No hay estadísticas disponibles.</p>
       </Card>
     );
   }
 
   return (
     <Card className="space-y-4">
-      <h2 className="text-lg font-semibold text-slate-900">Sales Stats</h2>
+      <h2 className="text-lg font-semibold text-slate-900">Estadísticas de ventas</h2>
 
       <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
-        <MetricCard label="Sales Count" value={String(stats.salesCount)} />
-        <MetricCard label="Revenue" value={formatMoney(stats.totalRevenue, currency)} />
-        <MetricCard label="Cost" value={formatMoney(stats.totalCost, currency)} />
-        <MetricCard label="Profit" value={formatMoney(stats.totalProfit, currency)} />
-        <MetricCard label="Avg Margin" value={formatPercent(stats.averageMarginPct)} />
-        <MetricCard label="Avg Ticket" value={formatMoney(stats.averageTicket, currency)} />
+        <MetricCard label="Cantidad de ventas" value={String(stats.salesCount)} />
+        <MetricCard label="Ingresos" value={formatMoney(stats.totalRevenue, currency)} />
+        <MetricCard label="Costo" value={formatMoney(stats.totalCost, currency)} />
+        <MetricCard label="Ganancia" value={formatMoney(stats.totalProfit, currency)} />
+        <MetricCard label="Margen prom." value={formatPercent(stats.averageMarginPct)} />
+        <MetricCard label="Ticket prom." value={formatMoney(stats.averageTicket, currency)} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div>
-          <p className="text-sm font-semibold text-slate-800">Top Selling Products</p>
+          <p className="text-sm font-semibold text-slate-800">Productos más vendidos</p>
           <ul className="mt-2 space-y-2">
             {stats.topSellingProducts.length === 0 ? (
-              <li className="text-sm text-slate-500">No data for this period.</li>
+              <li className="text-sm text-slate-500">No hay datos para este periodo.</li>
             ) : (
               stats.topSellingProducts.map((product) => (
                 <li key={`sell-${product.productId}`} className="rounded-lg border border-slate-200 p-3 text-sm">
                   <p className="font-medium text-slate-900">{product.productName}</p>
-                  <p className="text-slate-500">Qty: {product.totalQuantity}</p>
-                  <p className="text-slate-500">Revenue: {formatMoney(product.totalRevenue, currency)}</p>
+                  <p className="text-slate-500">Cant.: {product.totalQuantity}</p>
+                  <p className="text-slate-500">Ingresos: {formatMoney(product.totalRevenue, currency)}</p>
                 </li>
               ))
             )}
@@ -62,16 +62,16 @@ export function SalesStatsPanel({ stats, isLoading, error, currency }: SalesStat
         </div>
 
         <div>
-          <p className="text-sm font-semibold text-slate-800">Top Profitable Products</p>
+          <p className="text-sm font-semibold text-slate-800">Productos más rentables</p>
           <ul className="mt-2 space-y-2">
             {stats.topProfitableProducts.length === 0 ? (
-              <li className="text-sm text-slate-500">No data for this period.</li>
+              <li className="text-sm text-slate-500">No hay datos para este periodo.</li>
             ) : (
               stats.topProfitableProducts.map((product) => (
                 <li key={`profit-${product.productId}`} className="rounded-lg border border-slate-200 p-3 text-sm">
                   <p className="font-medium text-slate-900">{product.productName}</p>
-                  <p className="text-slate-500">Profit: {formatMoney(product.totalProfit, currency)}</p>
-                  <p className="text-slate-500">Qty: {product.totalQuantity}</p>
+                  <p className="text-slate-500">Ganancia: {formatMoney(product.totalProfit, currency)}</p>
+                  <p className="text-slate-500">Cant.: {product.totalQuantity}</p>
                 </li>
               ))
             )}

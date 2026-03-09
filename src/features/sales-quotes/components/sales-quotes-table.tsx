@@ -14,14 +14,14 @@ export function SalesQuotesTable({ quotes }: SalesQuotesTableProps) {
         <thead className="bg-slate-50">
           <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
             <th className="px-4 py-3">Code</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Customer</th>
-            <th className="px-4 py-3">Currency</th>
-            <th className="px-4 py-3">Revenue</th>
-            <th className="px-4 py-3">Cost</th>
-            <th className="px-4 py-3">Profit</th>
-            <th className="px-4 py-3">Margin</th>
-            <th className="px-4 py-3">Created</th>
+            <th className="px-4 py-3">Estado</th>
+            <th className="px-4 py-3">Cliente</th>
+            <th className="px-4 py-3">Moneda</th>
+            <th className="px-4 py-3">Ingresos</th>
+            <th className="px-4 py-3">Costo</th>
+            <th className="px-4 py-3">Ganancia</th>
+            <th className="px-4 py-3">Margen</th>
+            <th className="px-4 py-3">Creada</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">

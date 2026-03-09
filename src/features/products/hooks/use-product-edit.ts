@@ -45,7 +45,7 @@ export function useProductEdit(productId: string): UseProductEditResult {
       setProduct(productResponse.data);
       setCategories(categoriesResponse.data);
     } catch {
-      setError("Unable to load product details.");
+      setError("No se pudieron cargar los detalles del producto.");
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +62,7 @@ export function useProductEdit(productId: string): UseProductEditResult {
         setProduct(response.data);
         setSuccessMessage(response.message);
       } catch {
-        setError("Unable to update product.");
+        setError("No se pudo actualizar el producto.");
       } finally {
         setIsSaving(false);
       }
@@ -79,9 +79,9 @@ export function useProductEdit(productId: string): UseProductEditResult {
       try {
         await productsService.uploadProductImage(productId, payload);
         await fetchData();
-        setSuccessMessage("Image uploaded successfully.");
+        setSuccessMessage("Imagen subida correctamente.");
       } catch {
-        setError("Unable to upload product image.");
+        setError("No se pudo subir la imagen del producto.");
       } finally {
         setIsSaving(false);
       }
@@ -107,13 +107,13 @@ export function useProductEdit(productId: string): UseProductEditResult {
         );
         if (response.data.cloudinaryCleanup.error) {
           setSuccessMessage(
-            `Image deleted. Cloudinary cleanup warning: ${response.data.cloudinaryCleanup.error}`,
+            `Imagen eliminada. Aviso de limpieza en Cloudinary: ${response.data.cloudinaryCleanup.error}`,
           );
         } else {
-          setSuccessMessage("Image deleted successfully.");
+          setSuccessMessage("Imagen eliminada correctamente.");
         }
       } catch {
-        setError("Unable to delete product image.");
+        setError("No se pudo eliminar la imagen del producto.");
       } finally {
         setIsSaving(false);
       }
@@ -139,9 +139,9 @@ export function useProductEdit(productId: string): UseProductEditResult {
               }
             : current,
         );
-        setSuccessMessage("Image metadata updated successfully.");
+        setSuccessMessage("Metadatos de imagen actualizados correctamente.");
       } catch {
-        setError("Unable to update image metadata.");
+        setError("No se pudieron actualizar los metadatos de la imagen.");
       } finally {
         setIsSaving(false);
       }
@@ -158,13 +158,13 @@ export function useProductEdit(productId: string): UseProductEditResult {
       const response = await productsService.deleteProduct(productId);
       if (response.data.cloudinaryCleanupPendingPublicIds.length > 0) {
         setSuccessMessage(
-          `Product deleted. Pending cloud cleanup: ${response.data.cloudinaryCleanupPendingPublicIds.length} image(s).`,
+          `Producto eliminado. Limpieza de nube pendiente: ${response.data.cloudinaryCleanupPendingPublicIds.length} imagen(es).`,
         );
       } else {
-        setSuccessMessage("Product deleted successfully.");
+        setSuccessMessage("Producto eliminado correctamente.");
       }
     } catch {
-      setError("Unable to delete product. It may be referenced by quote requests.");
+      setError("No se pudo eliminar el producto. Puede estar referenciado por solicitudes de cotización.");
       throw new Error("delete_failed");
     } finally {
       setIsSaving(false);

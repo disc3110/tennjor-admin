@@ -120,8 +120,8 @@ export function SalesView() {
   return (
     <section className="space-y-6">
       <PageHeader
-        title="Sales"
-        subtitle="Completed sales, reporting, and export controls."
+        title="Ventas"
+        subtitle="Ventas completadas, reportes y controles de exportación."
         action={
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Button
@@ -142,7 +142,7 @@ export function SalesView() {
                 });
               }}
             >
-              {isExporting ? "Exporting..." : "Export CSV"}
+              {isExporting ? "Exportando..." : "Exportar CSV"}
             </Button>
             <Button
               variant="secondary"
@@ -153,7 +153,7 @@ export function SalesView() {
                 });
               }}
             >
-              Refresh
+              Actualizar
             </Button>
           </div>
         }
@@ -166,7 +166,7 @@ export function SalesView() {
       ) : null}
 
       <Card>
-        <h2 className="text-sm font-semibold text-slate-800">Sales Stats Filters</h2>
+        <h2 className="text-sm font-semibold text-slate-800">Filtros de estadísticas de ventas</h2>
         <div className="mt-3 grid gap-3 lg:grid-cols-6">
           <select
             className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
@@ -177,9 +177,9 @@ export function SalesView() {
               })
             }
           >
-            <option value="month">Month</option>
-            <option value="year">Year</option>
-            <option value="custom">Custom</option>
+            <option value="month">Mes</option>
+            <option value="year">Año</option>
+            <option value="custom">Personalizado</option>
           </select>
           <Input
             type="number"
@@ -216,7 +216,7 @@ export function SalesView() {
             value={statsStatus}
             onChange={(event) => updateQuery({ statsStatus: event.target.value })}
           >
-            <option value="all">All statuses</option>
+            <option value="all">Todos los estados</option>
             <option value="COMPLETED">COMPLETED</option>
             <option value="CANCELLED">CANCELLED</option>
             <option value="REFUNDED">REFUNDED</option>
@@ -233,7 +233,7 @@ export function SalesView() {
             value={status}
             onChange={(event) => updateQuery({ status: event.target.value, page: 1 })}
           >
-            <option value="all">All statuses</option>
+            <option value="all">Todos los estados</option>
             <option value="COMPLETED">COMPLETED</option>
             <option value="CANCELLED">CANCELLED</option>
             <option value="REFUNDED">REFUNDED</option>
@@ -242,13 +242,13 @@ export function SalesView() {
           <Input
             value={customerName}
             onChange={(event) => updateQuery({ customerName: event.target.value, page: 1 })}
-            placeholder="Customer name"
+            placeholder="Nombre del cliente"
           />
 
           <Input
             value={saleNumber}
             onChange={(event) => updateQuery({ saleNumber: event.target.value, page: 1 })}
-            placeholder="Sale number"
+            placeholder="Número de venta"
           />
 
           <Input
@@ -268,10 +268,10 @@ export function SalesView() {
             value={sortBy}
             onChange={(event) => updateQuery({ sortBy: event.target.value })}
           >
-            <option value="completedAt">Sort by completedAt</option>
-            <option value="createdAt">Sort by createdAt</option>
-            <option value="totalRevenue">Sort by totalRevenue</option>
-            <option value="totalProfit">Sort by totalProfit</option>
+            <option value="completedAt">Ordenar por completedAt</option>
+            <option value="createdAt">Ordenar por createdAt</option>
+            <option value="totalRevenue">Ordenar por totalRevenue</option>
+            <option value="totalProfit">Ordenar por totalProfit</option>
           </select>
 
           <select
@@ -289,14 +289,14 @@ export function SalesView() {
               min={1}
               value={page}
               onChange={(event) => updateQuery({ page: parsePositiveInt(event.target.value, 1) })}
-              placeholder="Page"
+              placeholder="Página"
             />
             <Input
               type="number"
               min={1}
               value={limit}
               onChange={(event) => updateQuery({ limit: parsePositiveInt(event.target.value, 20), page: 1 })}
-              placeholder="Limit"
+              placeholder="Límite"
             />
           </div>
         </div>
@@ -308,7 +308,7 @@ export function SalesView() {
           <p className="text-2xl font-semibold text-slate-900">{meta?.total ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Page</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Página</p>
           <p className="text-2xl font-semibold text-slate-900">{meta?.page ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
@@ -316,7 +316,7 @@ export function SalesView() {
           <p className="text-2xl font-semibold text-slate-900">{meta?.limit ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total Pages</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total de páginas</p>
           <p className="text-2xl font-semibold text-slate-900">{meta?.totalPages ?? "--"}</p>
         </Card>
       </div>
@@ -325,15 +325,15 @@ export function SalesView() {
 
       {!isLoading && error ? (
         <Card className="py-14 text-center">
-          <h2 className="text-lg font-semibold text-slate-900">Could not load sales</h2>
+          <h2 className="text-lg font-semibold text-slate-900">No se pudieron cargar las ventas</h2>
           <p className="mt-2 text-sm text-slate-500">{error}</p>
         </Card>
       ) : null}
 
       {!isLoading && !error && sales.length === 0 ? (
         <Card className="py-14 text-center">
-          <h2 className="text-lg font-semibold text-slate-900">No sales found</h2>
-          <p className="mt-2 text-sm text-slate-500">Adjust filters and try again.</p>
+          <h2 className="text-lg font-semibold text-slate-900">No se encontraron ventas</h2>
+          <p className="mt-2 text-sm text-slate-500">Ajusta los filtros e inténtalo de nuevo.</p>
         </Card>
       ) : null}
 

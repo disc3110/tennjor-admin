@@ -55,7 +55,7 @@ export function ProductVariantRangeGenerator({
 
   return (
     <Card>
-      <h2 className="text-lg font-semibold text-slate-900">Size Range Generator</h2>
+      <h2 className="text-lg font-semibold text-slate-900">Generador de rango de tallas</h2>
       <form className="mt-4 grid gap-3 md:grid-cols-2" onSubmit={handleSubmit}>
         <Input type="number" step="0.5" value={startSize} onChange={(e) => setStartSize(e.target.value)} required />
         <Input type="number" step="0.5" value={endSize} onChange={(e) => setEndSize(e.target.value)} required />
@@ -65,26 +65,26 @@ export function ProductVariantRangeGenerator({
             checked={includeHalfSizes}
             onChange={(e) => setIncludeHalfSizes(e.target.checked)}
           />
-          Include half sizes
+          Incluir medias tallas
         </label>
         <Input placeholder="Color" value={color} onChange={(e) => setColor(e.target.value)} required />
         <Input
           type="number"
           min={0}
-          placeholder="Default stock"
+          placeholder="Stock por defecto"
           value={stock}
           onChange={(e) => setStock(e.target.value)}
           required
         />
         <label className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">
           <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
-          Active variants
+          Variantes activas
         </label>
 
         <div className="md:col-span-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Preview</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Vista previa</p>
           {preview.length === 0 ? (
-            <p className="mt-2 text-sm text-slate-500">Invalid size range.</p>
+            <p className="mt-2 text-sm text-slate-500">Rango de tallas inválido.</p>
           ) : (
             <p className="mt-2 text-sm text-slate-700">{preview.join(", ")}</p>
           )}
@@ -92,7 +92,7 @@ export function ProductVariantRangeGenerator({
 
         <div className="md:col-span-2 flex justify-end">
           <Button type="submit" disabled={isSaving || preview.length === 0}>
-            {isSaving ? "Creating..." : `Create ${preview.length} Variant(s)`}
+            {isSaving ? "Creando..." : `Crear ${preview.length} variante(s)`}
           </Button>
         </div>
       </form>

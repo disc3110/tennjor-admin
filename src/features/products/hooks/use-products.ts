@@ -48,7 +48,7 @@ export function useProducts(query: ProductAdminListQuery = {}): UseProductsResul
       setProducts(filteredData);
       setMeta(response.meta);
     } catch {
-      setError("Unable to load products right now.");
+      setError("No se pudieron cargar los productos en este momento.");
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +68,7 @@ export function useProducts(query: ProductAdminListQuery = {}): UseProductsResul
           previous.map((item) => (item.id === product.id ? response.data : item)),
         );
       } catch {
-        setError("Unable to update product status.");
+        setError("No se pudo actualizar el estado del producto.");
       } finally {
         setIsUpdating(null);
       }

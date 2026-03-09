@@ -11,7 +11,7 @@ function normalizePhoneForWhatsApp(phone: string) {
 export function buildQuoteSummaryText(quote: AdminQuoteRequestDetail) {
   const itemsText =
     quote.items.length === 0
-      ? "No items"
+      ? "Sin artículos"
       : quote.items
           .map(
             (item) =>
@@ -20,15 +20,15 @@ export function buildQuoteSummaryText(quote: AdminQuoteRequestDetail) {
           .join("\n");
 
   return [
-    `Quote ${quote.id}`,
-    `Customer: ${quote.customerName}`,
-    `Email: ${quote.customerEmail || "-"}`,
-    `Phone: ${quote.customerPhone || "-"}`,
-    `City: ${quote.customerCity || "-"}`,
-    `Status: ${quote.status}`,
-    "Items:",
+    `Cotización ${quote.id}`,
+    `Cliente: ${quote.customerName}`,
+    `Correo: ${quote.customerEmail || "-"}`,
+    `Teléfono: ${quote.customerPhone || "-"}`,
+    `Ciudad: ${quote.customerCity || "-"}`,
+    `Estado: ${quote.status}`,
+    "Artículos:",
     itemsText,
-    quote.notes ? `Customer notes: ${quote.notes}` : null,
+    quote.notes ? `Notas del cliente: ${quote.notes}` : null,
   ]
     .filter(Boolean)
     .join("\n");
@@ -38,17 +38,17 @@ export function buildFollowUpMessageText(quote: AdminQuoteRequestDetail) {
   const firstItem = quote.items[0];
   const itemText = firstItem
     ? `${firstItem.productNameSnapshot}${
-        quote.items.length > 1 ? ` and ${quote.items.length - 1} more item(s)` : ""
+        quote.items.length > 1 ? ` y ${quote.items.length - 1} artículo(s) más` : ""
       }`
-    : "your requested items";
+    : "los artículos solicitados";
 
   return [
-    `Hi ${quote.customerName},`,
+    `Hola ${quote.customerName},`,
     "",
-    `This is the Tennjor team following up on your quote request (${quote.id}) for ${itemText}.`,
-    "Please let us know if you want us to proceed with pricing and availability details.",
+    `Somos el equipo de Tennjor dando seguimiento a tu solicitud de cotización (${quote.id}) para ${itemText}.`,
+    "Por favor cuéntanos si deseas que continuemos con precios y disponibilidad.",
     "",
-    "Thank you!",
+    "¡Gracias!",
   ].join("\n");
 }
 
@@ -65,7 +65,7 @@ export function buildWhatsAppUrl(quote: AdminQuoteRequestDetail) {
 export function buildMailtoUrl(quote: AdminQuoteRequestDetail) {
   if (!quote.customerEmail) return null;
 
-  const subject = `Tennjor quote follow-up (${quote.id})`;
+  const subject = `Seguimiento de cotización Tennjor (${quote.id})`;
   const body = buildFollowUpMessageText(quote);
   return `mailto:${quote.customerEmail}?subject=${encode(subject)}&body=${encode(body)}`;
 }

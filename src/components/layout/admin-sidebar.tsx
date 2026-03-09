@@ -22,12 +22,12 @@ type AdminSidebarProps = {
 };
 
 const navItems = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Products", href: "/admin/products", icon: Package },
-  { label: "Categories", href: "/admin/categories", icon: Shapes },
-  { label: "Quotes", href: "/admin/quotes", icon: MessageSquareQuote },
-  { label: "Sales Quotes", href: "/admin/sales-quotes", icon: ReceiptText },
-  { label: "Sales", href: "/admin/sales", icon: ShoppingBag },
+  { label: "Panel de control", href: "/admin", icon: LayoutDashboard },
+  { label: "Productos", href: "/admin/products", icon: Package },
+  { label: "Categorías", href: "/admin/categories", icon: Shapes },
+  { label: "Cotizaciones", href: "/admin/quotes", icon: MessageSquareQuote },
+  { label: "Cotizaciones de venta", href: "/admin/sales-quotes", icon: ReceiptText },
+  { label: "Ventas", href: "/admin/sales", icon: ShoppingBag },
 ] as const;
 
 export function AdminSidebar({ isOpen, onClose, onSignOut }: AdminSidebarProps) {
@@ -59,7 +59,7 @@ export function AdminSidebar({ isOpen, onClose, onSignOut }: AdminSidebarProps) 
             variant="ghost"
             className="p-2 md:hidden"
             onClick={onClose}
-            aria-label="Close navigation"
+            aria-label="Cerrar navegación"
           >
             <X className="size-5" />
           </Button>
@@ -93,7 +93,7 @@ export function AdminSidebar({ isOpen, onClose, onSignOut }: AdminSidebarProps) 
 
         <Button variant="ghost" className="justify-start gap-3 text-slate-600" onClick={onSignOut}>
           <LogOut className="size-4" />
-          Logout
+          Cerrar sesión
         </Button>
       </aside>
     </>

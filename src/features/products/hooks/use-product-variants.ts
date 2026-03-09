@@ -55,7 +55,7 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
       const response = await productsService.getById(productId);
       setProduct(response.data);
     } catch {
-      setError("Unable to load variants.");
+      setError("No se pudieron cargar las variantes.");
     } finally {
       setIsLoading(false);
     }
@@ -70,9 +70,9 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
       try {
         await productsService.createVariant(productId, payload);
         await loadProduct();
-        setSuccessMessage("Variant created successfully.");
+        setSuccessMessage("Variante creada correctamente.");
       } catch {
-        setError("Unable to create variant.");
+        setError("No se pudo crear la variante.");
       } finally {
         setIsSaving(false);
       }
@@ -98,9 +98,9 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
               }
             : current,
         );
-        setSuccessMessage("Variant updated successfully.");
+        setSuccessMessage("Variante actualizada correctamente.");
       } catch {
-        setError("Unable to update variant.");
+        setError("No se pudo actualizar la variante.");
       } finally {
         setIsSaving(false);
       }
@@ -127,7 +127,7 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
       setSizePreview(sizes);
 
       if (sizes.length === 0) {
-        setError("Invalid size range.");
+        setError("Rango de tallas inválido.");
         return;
       }
 
@@ -148,10 +148,10 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
 
         await loadProduct();
         setSuccessMessage(
-          `${response.data.createdCount} created, ${response.data.skippedCount} skipped (${response.data.skippedSizes.join(", ") || "none"}).`,
+          `${response.data.createdCount} creadas, ${response.data.skippedCount} omitidas (${response.data.skippedSizes.join(", ") || "ninguna"}).`,
         );
       } catch {
-        setError("Failed during range variant creation.");
+        setError("Falló la creación de variantes por rango.");
       } finally {
         setIsSaving(false);
       }
@@ -175,9 +175,9 @@ export function useProductVariants(productId: string): UseProductVariantsResult 
               }
             : current,
         );
-        setSuccessMessage("Variant deleted successfully.");
+        setSuccessMessage("Variante eliminada correctamente.");
       } catch {
-        setError("Unable to delete variant.");
+        setError("No se pudo eliminar la variante.");
       } finally {
         setIsSaving(false);
       }

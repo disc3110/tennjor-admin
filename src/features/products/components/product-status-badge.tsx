@@ -14,7 +14,7 @@ export function ProductStatusBadge({ isActive }: ProductStatusBadgeProps) {
           : "bg-slate-100 text-slate-600 ring-slate-200",
       )}
     >
-      {isActive ? "Active" : "Inactive"}
+      {isActive ? "Activo" : "Inactivo"}
     </span>
   );
 }
