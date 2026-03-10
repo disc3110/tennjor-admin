@@ -96,7 +96,7 @@ export function useProductEdit(productId: string): UseProductEditResult {
       setSuccessMessage(null);
 
       try {
-        const response = await productsService.deleteProductImage(imageId);
+        await productsService.deleteProductImage(imageId);
         setProduct((current) =>
           current
             ? {
@@ -105,13 +105,7 @@ export function useProductEdit(productId: string): UseProductEditResult {
               }
             : current,
         );
-        if (response.data.cloudinaryCleanup.error) {
-          setSuccessMessage(
-            `Imagen eliminada. Aviso de limpieza en Cloudinary: ${response.data.cloudinaryCleanup.error}`,
-          );
-        } else {
-          setSuccessMessage("Imagen eliminada correctamente.");
-        }
+        setSuccessMessage("Imagen eliminada correctamente.");
       } catch {
         setError("No se pudo eliminar la imagen del producto.");
       } finally {
@@ -155,14 +149,8 @@ export function useProductEdit(productId: string): UseProductEditResult {
     setSuccessMessage(null);
 
     try {
-      const response = await productsService.deleteProduct(productId);
-      if (response.data.cloudinaryCleanupPendingPublicIds.length > 0) {
-        setSuccessMessage(
-          `Producto eliminado. Limpieza de nube pendiente: ${response.data.cloudinaryCleanupPendingPublicIds.length} imagen(es).`,
-        );
-      } else {
-        setSuccessMessage("Producto eliminado correctamente.");
-      }
+      await productsService.deleteProduct(productId);
+      setSuccessMessage("Producto eliminado correctamente.");
     } catch {
       setError("No se pudo eliminar el producto. Puede estar referenciado por solicitudes de cotización.");
       throw new Error("delete_failed");
