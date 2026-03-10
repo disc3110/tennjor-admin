@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
@@ -15,17 +16,31 @@ type QuoteDetailViewProps = {
   quoteId: string;
 };
 
-const statusOptions: QuoteRequestStatus[] = ["NEW", "CONTACTED", "QUOTED", "CLOSED", "REJECTED"];
+const statusOptions: QuoteRequestStatus[] = ["NEW", "CONTACTED", "QUOTED", "CONVERTED", "CLOSED", "REJECTED"];
+const convertibleStatuses: QuoteRequestStatus[] = ["NEW", "CONTACTED", "QUOTED"];
 
 function formatDate(date: string) {
   return new Date(date).toLocaleString();
 }
 
+function formatCostSnapshot(value: string | number | null, currency: string | null) {
+  if (value == null) return "Sin costo base snapshot";
+  const amount = Number(value);
+  if (Number.isNaN(amount)) return "Sin costo base snapshot";
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: currency || "MXN",
+    minimumFractionDigits: 2,
+  }).format(amount);
+}
+
 export function QuoteDetailView({ quoteId }: QuoteDetailViewProps) {
-  const { quote, isLoading, isSaving, error, successMessage, saveStatusAndNote } =
+  const router = useRouter();
+  const { quote, isLoading, isSaving, isConverting, error, successMessage, saveStatusAndNote, convertToSalesQuote } =
     useQuoteDetail(quoteId);
   const [statusDraft, setStatusDraft] = useState<QuoteRequestStatus | null>(null);
   const [note, setNote] = useState("");
+  const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const handleSave = async () => {
     if (!quote) return;
@@ -40,6 +55,31 @@ export function QuoteDetailView({ quoteId }: QuoteDetailViewProps) {
     setNote("");
     setStatusDraft(null);
   };
+
+  const handleConvert = async () => {
+    const result = await convertToSalesQuote();
+    const salesQuoteId = result.data?.salesQuote?.id;
+    if (!salesQuoteId) {
+      if (result.errorMessage) {
+        setToast({ type: "error", message: result.errorMessage });
+      }
+      return;
+    }
+
+    setToast({
+      type: "success",
+      message: "Cotización convertida a cotización de venta",
+    });
+    setTimeout(() => {
+      router.replace(`/admin/sales-quotes/${salesQuoteId}`);
+    }, 450);
+  };
+
+  useEffect(() => {
+    if (!toast) return;
+    const timeoutId = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(timeoutId);
+  }, [toast]);
 
   if (isLoading) {
     return (
@@ -103,6 +143,7 @@ export function QuoteDetailView({ quoteId }: QuoteDetailViewProps) {
                   <th className="px-3 py-2">Talla</th>
                   <th className="px-3 py-2">Color</th>
                   <th className="px-3 py-2">Cant.</th>
+                  <th className="px-3 py-2">Costo base snapshot</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -113,6 +154,9 @@ export function QuoteDetailView({ quoteId }: QuoteDetailViewProps) {
                     <td className="px-3 py-3">{item.size}</td>
                     <td className="px-3 py-3">{item.color}</td>
                     <td className="px-3 py-3">{item.quantity}</td>
+                    <td className="px-3 py-3 text-xs text-slate-500">
+                      {formatCostSnapshot(item.baseCostSnapshot, item.costCurrencySnapshot)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -146,6 +190,18 @@ export function QuoteDetailView({ quoteId }: QuoteDetailViewProps) {
           </Card>
 
           <QuoteQuickActionsCard quote={quote} />
+
+          {convertibleStatuses.includes(quote.status) ? (
+            <Card className="space-y-3">
+              <h2 className="text-lg font-semibold text-slate-900">Conversión</h2>
+              <p className="text-sm text-slate-600">
+                Convierte esta solicitud en una cotización de venta interna y copia sus artículos.
+              </p>
+              <Button className="w-full" disabled={isConverting} onClick={() => void handleConvert()}>
+                {isConverting ? "Convirtiendo..." : "Convertir a cotización de venta"}
+              </Button>
+            </Card>
+          ) : null}
 
           <Card className="space-y-4">
             <h2 className="text-lg font-semibold text-slate-900">Estado y notas internas</h2>
@@ -196,6 +252,17 @@ export function QuoteDetailView({ quoteId }: QuoteDetailViewProps) {
           </Card>
         </div>
       </div>
+      {toast ? (
+        <div
+          className={`fixed bottom-4 right-4 z-50 rounded-lg px-4 py-3 text-sm font-medium shadow-lg ${
+            toast.type === "success" ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          {toast.message}
+        </div>
+      ) : null}
     </section>
   );
 }

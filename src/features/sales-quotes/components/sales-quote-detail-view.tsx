@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { FormEvent } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, RotateCw } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
@@ -31,6 +31,9 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
   const {
     quote,
     productOptions,
+    productCostById,
+    ensureProductCost,
+    resolvingProductCostIds,
     isLoading,
     isSaving,
     error,
@@ -41,6 +44,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
     updateItem,
     deleteItem,
     recalculate,
+    addInternalNote,
     completeSale,
   } = useSalesQuoteDetail(quoteId);
 
@@ -51,16 +55,43 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
     variantId: "",
     quantity: "1",
     unitSalePrice: "0",
-    unitCostSnapshot: "",
     discountType: "",
     discountValue: "",
-    sortOrder: "0",
   });
+  const [internalNoteDraft, setInternalNoteDraft] = useState("");
+  const selectedProductId = itemDraft.productId;
 
   const selectedProduct = useMemo(
-    () => productOptions.find((product) => product.id === itemDraft.productId),
-    [itemDraft.productId, productOptions],
+    () => productOptions.find((product) => product.id === selectedProductId),
+    [selectedProductId, productOptions],
   );
+  useEffect(() => {
+    if (!selectedProductId) return;
+    ensureProductCost(selectedProductId).catch(() => {
+      // Keep UI fallback text when cost lookup fails.
+    });
+  }, [ensureProductCost, selectedProductId]);
+
+  const resolvedSelectedProductCost = selectedProductId
+    ? productCostById[selectedProductId]
+    : undefined;
+  const selectedProductBaseCost = useMemo(() => {
+    const value = selectedProduct?.baseCost ?? resolvedSelectedProductCost?.baseCost;
+    if (value == null) return null;
+    if (typeof value === "string" && value.trim().length === 0) return null;
+    return toNumber(value);
+  }, [resolvedSelectedProductCost?.baseCost, selectedProduct?.baseCost]);
+  const selectedProductCostCurrencyCandidate =
+    selectedProduct?.costCurrency ?? resolvedSelectedProductCost?.costCurrency ?? quote?.currency ?? "MXN";
+  const selectedProductCostCurrency =
+    typeof selectedProductCostCurrencyCandidate === "string" && selectedProductCostCurrencyCandidate.trim().length > 0
+      ? selectedProductCostCurrencyCandidate
+      : "MXN";
+  const estimatedQuantity = Number(itemDraft.quantity || 0);
+  const estimatedRevenue = estimatedQuantity * Number(itemDraft.unitSalePrice || 0);
+  const estimatedCost =
+    selectedProductBaseCost != null ? estimatedQuantity * selectedProductBaseCost : null;
+  const estimatedProfit = estimatedCost != null ? estimatedRevenue - estimatedCost : null;
 
   if (isLoading) {
     return (
@@ -105,12 +136,8 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
       variantId: itemDraft.variantId || undefined,
       quantity: Number(itemDraft.quantity),
       unitSalePrice: Number(itemDraft.unitSalePrice),
-      unitCostSnapshot: itemDraft.unitCostSnapshot.trim()
-        ? Number(itemDraft.unitCostSnapshot)
-        : undefined,
       discountType: (itemDraft.discountType as InternalDiscountType) || undefined,
       discountValue: itemDraft.discountValue.trim() ? Number(itemDraft.discountValue) : undefined,
-      sortOrder: Number(itemDraft.sortOrder || 0),
     });
 
     setItemDraft({
@@ -118,11 +145,16 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
       variantId: "",
       quantity: "1",
       unitSalePrice: "0",
-      unitCostSnapshot: "",
       discountType: "",
       discountValue: "",
-      sortOrder: "0",
     });
+  };
+
+  const handleAddInternalNote = async () => {
+    const message = internalNoteDraft.trim();
+    if (!message) return;
+    await addInternalNote(message);
+    setInternalNoteDraft("");
   };
 
   const handleCompleteSale = async () => {
@@ -262,126 +294,172 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
               </Button>
             </div>
 
-            <div className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 md:grid-cols-2">
-              <select
-                value={itemDraft.productId}
-                onChange={(event) => {
-                  const nextProduct = productOptions.find((product) => product.id === event.target.value);
-                  setItemDraft((current) => ({
-                    ...current,
-                    productId: event.target.value,
-                    variantId: "",
-                    unitCostSnapshot:
-                      nextProduct?.baseCost != null ? String(nextProduct.baseCost) : current.unitCostSnapshot,
-                  }));
-                }}
-                className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
-                disabled={!isEditable || isSaving}
-              >
-                <option value="">Seleccionar producto</option>
-                {productOptions.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
+            <div className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Selección</p>
+                  <label className="space-y-1 text-sm">
+                    <span className="text-slate-700">Producto</span>
+                    <select
+                      value={itemDraft.productId}
+                      onChange={(event) =>
+                        setItemDraft((current) => ({
+                          ...current,
+                          productId: event.target.value,
+                          variantId: "",
+                        }))
+                      }
+                      className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
+                      disabled={!isEditable || isSaving}
+                    >
+                      <option value="">Seleccionar producto</option>
+                      {productOptions.map((product) => (
+                        <option key={product.id} value={product.id}>
+                          {product.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-sm">
+                    <span className="text-slate-700">Variante</span>
+                    <select
+                      value={itemDraft.variantId}
+                      onChange={(event) =>
+                        setItemDraft((current) => ({ ...current, variantId: event.target.value }))
+                      }
+                      className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
+                      disabled={!isEditable || isSaving || !selectedProduct}
+                    >
+                      <option value="">Sin variante</option>
+                      {(selectedProduct?.variants ?? []).map((variant) => (
+                        <option key={variant.id} value={variant.id}>
+                          {variant.size} / {variant.color} {variant.sku ? `(${variant.sku})` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
 
-              <select
-                value={itemDraft.variantId}
-                onChange={(event) =>
-                  setItemDraft((current) => ({ ...current, variantId: event.target.value }))
-                }
-                className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
-                disabled={!isEditable || isSaving || !selectedProduct}
-              >
-                <option value="">Variante (opcional)</option>
-                {(selectedProduct?.variants ?? []).map((variant) => (
-                  <option key={variant.id} value={variant.id}>
-                    {variant.size} / {variant.color} {variant.sku ? `(${variant.sku})` : ""}
-                  </option>
-                ))}
-              </select>
+                <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Venta</p>
+                  <label className="space-y-1 text-sm">
+                    <span className="text-slate-700">Cantidad</span>
+                    <Input
+                      type="number"
+                      min={1}
+                      value={itemDraft.quantity}
+                      onChange={(event) =>
+                        setItemDraft((current) => ({ ...current, quantity: event.target.value }))
+                      }
+                      placeholder="Cantidad"
+                      disabled={!isEditable || isSaving}
+                    />
+                  </label>
+                  <label className="space-y-1 text-sm">
+                    <span className="text-slate-700">Precio de venta por unidad</span>
+                    <Input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      className="no-number-spinner"
+                      value={itemDraft.unitSalePrice}
+                      onChange={(event) =>
+                        setItemDraft((current) => ({ ...current, unitSalePrice: event.target.value }))
+                      }
+                      placeholder="0.00"
+                      disabled={!isEditable || isSaving}
+                    />
+                  </label>
+                </div>
+              </div>
 
-              <Input
-                type="number"
-                min={1}
-                value={itemDraft.quantity}
-                onChange={(event) =>
-                  setItemDraft((current) => ({ ...current, quantity: event.target.value }))
-                }
-                placeholder="Cantidad"
-                disabled={!isEditable || isSaving}
-              />
-              <Input
-                type="number"
-                min={0}
-                step="0.01"
-                value={itemDraft.unitSalePrice}
-                onChange={(event) =>
-                  setItemDraft((current) => ({ ...current, unitSalePrice: event.target.value }))
-                }
-                placeholder="Precio de venta unitario"
-                disabled={!isEditable || isSaving}
-              />
-              <Input
-                type="number"
-                min={0}
-                step="0.01"
-                value={itemDraft.unitCostSnapshot}
-                onChange={(event) =>
-                  setItemDraft((current) => ({ ...current, unitCostSnapshot: event.target.value }))
-                }
-                placeholder="Costo unitario snapshot (opcional)"
-                disabled={!isEditable || isSaving}
-              />
-              <select
-                value={itemDraft.discountType}
-                onChange={(event) =>
-                  setItemDraft((current) => ({ ...current, discountType: event.target.value }))
-                }
-                className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
-                disabled={!isEditable || isSaving}
-              >
-                <option value="">Tipo de descuento (opcional)</option>
-                {discountOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <Input
-                type="number"
-                min={0}
-                step="0.01"
-                value={itemDraft.discountValue}
-                onChange={(event) =>
-                  setItemDraft((current) => ({ ...current, discountValue: event.target.value }))
-                }
-                placeholder="Valor del descuento"
-                disabled={!isEditable || isSaving || !itemDraft.discountType}
-              />
-              <Input
-                type="number"
-                min={0}
-                value={itemDraft.sortOrder}
-                onChange={(event) =>
-                  setItemDraft((current) => ({ ...current, sortOrder: event.target.value }))
-                }
-                placeholder="Orden"
-                disabled={!isEditable || isSaving}
-              />
-              <div className="md:col-span-2 flex justify-end">
-                <Button
-                  onClick={() => void handleAddItem()}
-                  disabled={
-                    isSaving ||
-                    !isEditable ||
-                    !itemDraft.productId ||
-                    Number(itemDraft.quantity) <= 0
-                  }
-                >
-                  {isSaving ? "Guardando..." : "Agregar artículo"}
-                </Button>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Referencia</p>
+                  <p className="text-sm font-medium text-slate-800">Costo base del producto</p>
+                  <p className="text-sm text-slate-700">
+                    {selectedProductId && resolvingProductCostIds[selectedProductId] && selectedProductBaseCost == null
+                      ? "Cargando costo base..."
+                      : selectedProductBaseCost != null
+                      ? formatMoney(selectedProductBaseCost, selectedProductCostCurrency)
+                      : "Sin costo base definido"}
+                  </p>
+                  <p className="text-xs text-slate-500">Se toma automáticamente del producto. Solo referencia.</p>
+                </div>
+
+                <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Descuento</p>
+                  <label className="space-y-1 text-sm">
+                    <span className="text-slate-700">Tipo de descuento</span>
+                    <select
+                      value={itemDraft.discountType}
+                      onChange={(event) =>
+                        setItemDraft((current) => ({ ...current, discountType: event.target.value }))
+                      }
+                      className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
+                      disabled={!isEditable || isSaving}
+                    >
+                      <option value="">Sin descuento</option>
+                      {discountOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="space-y-1 text-sm">
+                    <span className="text-slate-700">Descuento</span>
+                    <Input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      className="no-number-spinner"
+                      value={itemDraft.discountValue}
+                      onChange={(event) =>
+                        setItemDraft((current) => ({ ...current, discountValue: event.target.value }))
+                      }
+                      placeholder="0.00"
+                      disabled={!isEditable || isSaving || !itemDraft.discountType}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Vista previa</p>
+                  <InfoRow label="Ingreso estimado" value={formatMoney(estimatedRevenue, quote.currency)} />
+                  <InfoRow
+                    label="Costo estimado"
+                    value={
+                      estimatedCost != null
+                        ? formatMoney(estimatedCost, selectedProductCostCurrency)
+                        : "Sin costo base definido"
+                    }
+                  />
+                  <InfoRow
+                    label="Ganancia estimada"
+                    value={estimatedProfit != null ? formatMoney(estimatedProfit, quote.currency) : "--"}
+                  />
+                </div>
+
+                <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Acción</p>
+                  <p className="text-sm text-slate-600">Revisa los valores antes de agregar el artículo.</p>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => void handleAddItem()}
+                      disabled={
+                        isSaving ||
+                        !isEditable ||
+                        !itemDraft.productId ||
+                        Number(itemDraft.quantity) <= 0
+                      }
+                    >
+                      {isSaving ? "Guardando..." : "Agregar artículo"}
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -453,6 +531,44 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
             />
           </Card>
 
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold text-slate-900">Notas internas</h2>
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-slate-700">Agregar nota interna</span>
+              <textarea
+                className="min-h-24 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                value={internalNoteDraft}
+                onChange={(event) => setInternalNoteDraft(event.target.value)}
+                placeholder="Escribe una nota para el equipo"
+              />
+            </label>
+            <div className="flex justify-end">
+              <Button
+                disabled={isSaving || internalNoteDraft.trim().length === 0}
+                onClick={() => void handleAddInternalNote()}
+              >
+                {isSaving ? "Guardando..." : "Agregar nota"}
+              </Button>
+            </div>
+
+            {quote.internalNotes.length === 0 ? (
+              <p className="rounded-lg bg-slate-50 p-3 text-sm text-slate-500">
+                Aún no hay notas internas en esta cotización.
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {quote.internalNotes.map((note) => (
+                  <li key={note.id} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                    <p className="text-xs text-slate-500">
+                      {(note.author?.name || note.author?.email || "Administrador")} • {formatDateTime(note.createdAt)}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-800">{note.message}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+
           <Button
             className="w-full"
             disabled={isSaving || quote.items.length === 0 || quote.status === "COMPLETED"}
@@ -477,10 +593,8 @@ type QuoteItemRowProps = {
   onSave: (payload: {
     quantity?: number;
     unitSalePrice?: number;
-    unitCostSnapshot?: number;
     discountType?: InternalDiscountType;
     discountValue?: number;
-    sortOrder?: number;
   }) => Promise<void>;
   onDelete: () => Promise<void>;
 };
@@ -499,10 +613,8 @@ function QuoteItemRow({
   const [draft, setDraft] = useState({
     quantity: String(item.quantity),
     unitSalePrice: String(toNumber(item.unitSalePrice)),
-    unitCostSnapshot: String(toNumber(item.unitCostSnapshot)),
     discountType: item.discountType ?? "",
     discountValue: item.discountValue == null ? "" : String(toNumber(item.discountValue)),
-    sortOrder: String(item.sortOrder),
   });
 
   if (!isEditing) {
@@ -547,58 +659,65 @@ function QuoteItemRow({
     <tr className="bg-slate-50 text-sm text-slate-700">
       <td className="px-3 py-3" colSpan={8}>
         <div className="grid gap-2 md:grid-cols-3">
-          <Input
-            type="number"
-            min={1}
-            value={draft.quantity}
-            onChange={(event) => setDraft((current) => ({ ...current, quantity: event.target.value }))}
-          />
-          <Input
-            type="number"
-            min={0}
-            step="0.01"
-            value={draft.unitSalePrice}
-            onChange={(event) =>
-              setDraft((current) => ({ ...current, unitSalePrice: event.target.value }))
-            }
-          />
-          <Input
-            type="number"
-            min={0}
-            step="0.01"
-            value={draft.unitCostSnapshot}
-            onChange={(event) =>
-              setDraft((current) => ({ ...current, unitCostSnapshot: event.target.value }))
-            }
-          />
-          <select
-            value={draft.discountType}
-            onChange={(event) => setDraft((current) => ({ ...current, discountType: event.target.value }))}
-            className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
-          >
-            <option value="">Sin descuento</option>
-            {discountOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <Input
-            type="number"
-            min={0}
-            step="0.01"
-            value={draft.discountValue}
-            onChange={(event) =>
-              setDraft((current) => ({ ...current, discountValue: event.target.value }))
-            }
-            disabled={!draft.discountType}
-          />
-          <Input
-            type="number"
-            min={0}
-            value={draft.sortOrder}
-            onChange={(event) => setDraft((current) => ({ ...current, sortOrder: event.target.value }))}
-          />
+          <label className="space-y-1 text-sm">
+            <span className="text-slate-700">Cantidad</span>
+            <Input
+              type="number"
+              min={1}
+              value={draft.quantity}
+              onChange={(event) => setDraft((current) => ({ ...current, quantity: event.target.value }))}
+            />
+          </label>
+          <label className="space-y-1 text-sm">
+            <span className="text-slate-700">Precio de venta por unidad</span>
+            <Input
+              type="number"
+              min={0}
+              step="0.01"
+              className="no-number-spinner"
+              value={draft.unitSalePrice}
+              onChange={(event) =>
+                setDraft((current) => ({ ...current, unitSalePrice: event.target.value }))
+              }
+            />
+          </label>
+          <div className="space-y-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+            <p className="text-slate-700">Costo por unidad (referencia)</p>
+            <p className="font-medium text-slate-900">{formatMoney(item.unitCostSnapshot, currency)}</p>
+          </div>
+          <label className="space-y-1 text-sm">
+            <span className="text-slate-700">Tipo de descuento</span>
+            <select
+              value={draft.discountType}
+              onChange={(event) => setDraft((current) => ({ ...current, discountType: event.target.value }))}
+              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900"
+            >
+              <option value="">Sin descuento</option>
+              {discountOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="space-y-1 text-sm">
+            <span className="text-slate-700">Descuento</span>
+            <Input
+              type="number"
+              min={0}
+              step="0.01"
+              className="no-number-spinner"
+              value={draft.discountValue}
+              onChange={(event) =>
+                setDraft((current) => ({ ...current, discountValue: event.target.value }))
+              }
+              disabled={!draft.discountType}
+            />
+          </label>
+          <div className="space-y-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+            <p className="text-slate-700">Resumen de línea</p>
+            <p className="font-medium text-slate-900">{formatMoney(item.lineRevenue, currency)}</p>
+          </div>
         </div>
 
         <div className="mt-3 flex justify-end gap-2">
@@ -610,10 +729,8 @@ function QuoteItemRow({
               onSave({
                 quantity: Number(draft.quantity),
                 unitSalePrice: Number(draft.unitSalePrice),
-                unitCostSnapshot: Number(draft.unitCostSnapshot),
                 discountType: (draft.discountType as InternalDiscountType) || undefined,
                 discountValue: draft.discountValue.trim() ? Number(draft.discountValue) : undefined,
-                sortOrder: Number(draft.sortOrder || 0),
               }).catch(() => {
                 // Errors are handled in hook state.
               });

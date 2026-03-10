@@ -128,6 +128,8 @@ export type UpdateAdminProductPayload = {
   description?: string;
   isActive?: boolean;
   categoryId?: string;
+  baseCost?: number;
+  costCurrency?: string;
 };
 
 export type UpdateAdminProductResponse = {
@@ -141,6 +143,8 @@ export type CreateAdminProductPayload = {
   categoryId: string;
   description?: string;
   isActive?: boolean;
+  baseCost?: number;
+  costCurrency?: string;
 };
 
 export type CreateAdminProductResponse = {

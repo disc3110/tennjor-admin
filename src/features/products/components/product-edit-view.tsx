@@ -38,12 +38,19 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
   } = useProductEdit(productId);
 
   const handleSubmit = async (values: ProductFormValues) => {
+    const baseCostInput = values.baseCost.trim();
+    const parsedBaseCost =
+      baseCostInput.length > 0 && Number.isFinite(Number(baseCostInput))
+        ? Number(baseCostInput)
+        : undefined;
     const payload: UpdateAdminProductPayload = {
       name: values.name,
       slug: values.slug,
       description: values.description,
       categoryId: values.categoryId,
       isActive: values.isActive,
+      baseCost: parsedBaseCost,
+      costCurrency: values.costCurrency || "MXN",
     };
     await saveProduct(payload);
   };
@@ -139,6 +146,8 @@ export function ProductEditView({ productId }: ProductEditViewProps) {
               description: product.description ?? "",
               categoryId: product.category.id,
               isActive: product.isActive,
+              baseCost: product.baseCost == null ? "" : String(product.baseCost),
+              costCurrency: product.costCurrency ?? "MXN",
             }}
             categories={categories}
             isSaving={isSaving}

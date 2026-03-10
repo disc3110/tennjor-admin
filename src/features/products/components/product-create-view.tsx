@@ -33,12 +33,19 @@ export function ProductCreateView() {
   const [initialImagePriority, setInitialImagePriority] = useState<ProductImagePriority>("cover");
 
   const handleSubmit = async (values: ProductFormValues) => {
+    const baseCostInput = values.baseCost.trim();
+    const parsedBaseCost =
+      baseCostInput.length > 0 && Number.isFinite(Number(baseCostInput))
+        ? Number(baseCostInput)
+        : undefined;
     const payload: CreateAdminProductPayload = {
       name: values.name,
       slug: values.slug,
       categoryId: values.categoryId,
       description: values.description || undefined,
       isActive: values.isActive,
+      baseCost: parsedBaseCost,
+      costCurrency: values.costCurrency || "MXN",
     };
 
     const initialImage = initialImageFile
@@ -121,6 +128,8 @@ export function ProductCreateView() {
               description: "",
               categoryId: categories[0]?.id ?? "",
               isActive: true,
+              baseCost: "",
+              costCurrency: "MXN",
             }}
             categories={categories}
             isSaving={isSaving}

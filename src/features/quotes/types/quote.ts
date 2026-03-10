@@ -1,4 +1,4 @@
-export type QuoteRequestStatus = "NEW" | "CONTACTED" | "QUOTED" | "CLOSED" | "REJECTED";
+export type QuoteRequestStatus = "NEW" | "CONTACTED" | "QUOTED" | "CONVERTED" | "CLOSED" | "REJECTED";
 
 export type QuoteRequestSource = "WEB_FORM" | "WHATSAPP";
 
@@ -7,6 +7,8 @@ export type AdminQuoteRequestItem = {
   productId: string;
   productNameSnapshot: string;
   productSlugSnapshot: string;
+  baseCostSnapshot: string | number | null;
+  costCurrencySnapshot: string | null;
   size: string;
   color: string;
   quantity: number;
@@ -25,6 +27,7 @@ export type AdminQuoteRequest = {
   notes: string;
   internalNotes: string[];
   status: QuoteRequestStatus;
+  convertedAt?: string | null;
   source: QuoteRequestSource;
   createdAt: string;
   updatedAt: string;
@@ -66,6 +69,26 @@ export type UpdateAdminQuoteRequestStatusPayload = {
 export type UpdateAdminQuoteRequestStatusResponse = {
   message: string;
   data: AdminQuoteRequestDetail;
+};
+
+export type ConvertQuoteRequestToSalesQuoteResponse = {
+  message: string;
+  data: {
+    quoteRequest: {
+      id: string;
+      status: QuoteRequestStatus;
+      convertedAt: string | null;
+    };
+    salesQuote: {
+      id: string;
+      code: string;
+      status: string;
+      subtotal: string | number;
+      totalRevenue: string | number;
+      totalCost: string | number;
+    };
+    copiedItemsCount: number;
+  };
 };
 
 export type QuoteStatusFilter = "all" | "new" | "reviewed" | "quoted" | "closed";

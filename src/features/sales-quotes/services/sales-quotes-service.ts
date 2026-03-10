@@ -1,8 +1,10 @@
-import type { ProductAdminListResponse } from "@/src/features/products/types/product";
+import type { ProductAdminDetailResponse, ProductAdminListResponse } from "@/src/features/products/types/product";
 import type {
   CompleteInternalSaleQuoteResponse,
   CreateInternalSaleQuoteItemPayload,
   CreateInternalSaleQuoteItemResponse,
+  CreateInternalSaleQuoteNotePayload,
+  CreateInternalSaleQuoteNoteResponse,
   CreateInternalSaleQuotePayload,
   CreateInternalSaleQuoteResponse,
   DeleteInternalSaleQuoteItemResponse,
@@ -90,6 +92,15 @@ export const salesQuotesService = {
       },
     );
   },
+  addInternalNote(quoteId: string, payload: CreateInternalSaleQuoteNotePayload) {
+    return apiClient.request<CreateInternalSaleQuoteNoteResponse, CreateInternalSaleQuoteNotePayload>(
+      `/admin/sales-quotes/${quoteId}/internal-notes`,
+      {
+        method: "POST",
+        body: payload,
+      },
+    );
+  },
   completeSale(quoteId: string) {
     return apiClient.request<CompleteInternalSaleQuoteResponse>(
       `/admin/sales-quotes/${quoteId}/complete-sale`,
@@ -100,5 +111,8 @@ export const salesQuotesService = {
   },
   listProductOptions() {
     return apiClient.request<ProductAdminListResponse>("/admin/products?page=1&limit=100");
+  },
+  getProductOptionById(productId: string) {
+    return apiClient.request<ProductAdminDetailResponse>(`/admin/products/${productId}`);
   },
 };

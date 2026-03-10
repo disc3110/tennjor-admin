@@ -71,8 +71,23 @@ export type InternalQuoteCreatedBy = {
   role: string;
 };
 
+export type InternalSaleQuoteNoteAuthor = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+};
+
+export type InternalSaleQuoteNote = {
+  id: string;
+  message: string;
+  createdAt: string;
+  author: InternalSaleQuoteNoteAuthor;
+};
+
 export type InternalSaleQuoteDetail = InternalSaleQuoteSummary & {
   items: InternalSaleQuoteItem[];
+  internalNotes: InternalSaleQuoteNote[];
   publicQuoteRequest?: InternalQuoteLinkedPublicRequest | null;
   createdBy?: InternalQuoteCreatedBy | null;
 };
@@ -178,6 +193,15 @@ export type RecalculateInternalSaleQuoteResponse = {
   data: InternalQuoteTotals;
 };
 
+export type CreateInternalSaleQuoteNotePayload = {
+  message: string;
+};
+
+export type CreateInternalSaleQuoteNoteResponse = {
+  message: string;
+  data: InternalSaleQuoteNote;
+};
+
 export type CompleteInternalSaleQuoteResponse = {
   message: string;
   data: {
@@ -209,6 +233,7 @@ export type ProductOptionForInternalQuote = {
   name: string;
   slug: string;
   baseCost?: MonetaryValue | null;
+  costCurrency?: string | null;
   variants: Array<{
     id: string;
     size: string;

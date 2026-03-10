@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { salesQuotesService } from "@/src/features/sales-quotes/services/sales-quotes-service";
 import type {
   CompleteInternalSaleQuoteResponse,
@@ -14,6 +14,9 @@ import type {
 type UseSalesQuoteDetailResult = {
   quote: InternalSaleQuoteDetail | null;
   productOptions: ProductOptionForInternalQuote[];
+  productCostById: Record<string, { baseCost: string | number | null; costCurrency: string | null }>;
+  ensureProductCost: (productId: string) => Promise<void>;
+  resolvingProductCostIds: Record<string, true>;
   isLoading: boolean;
   isSaving: boolean;
   error: string | null;
@@ -24,16 +27,29 @@ type UseSalesQuoteDetailResult = {
   updateItem: (itemId: string, payload: UpdateInternalSaleQuoteItemPayload) => Promise<void>;
   deleteItem: (itemId: string) => Promise<void>;
   recalculate: () => Promise<void>;
+  addInternalNote: (message: string) => Promise<void>;
   completeSale: () => Promise<CompleteInternalSaleQuoteResponse["data"] | null>;
 };
 
 export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult {
   const [quote, setQuote] = useState<InternalSaleQuoteDetail | null>(null);
   const [productOptions, setProductOptions] = useState<ProductOptionForInternalQuote[]>([]);
+  const [productCostById, setProductCostById] = useState<
+    Record<string, { baseCost: string | number | null; costCurrency: string | null }>
+  >({});
+  const [resolvingProductCostIds, setResolvingProductCostIds] = useState<Record<string, true>>({});
+  const resolvedProductCostIdsRef = useRef<Record<string, true>>({});
+  const resolvingProductCostIdsRef = useRef<Record<string, true>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const hasDefinedCost = useCallback((value: string | number | null | undefined) => {
+    if (value == null) return false;
+    if (typeof value === "string") return value.trim().length > 0;
+    return true;
+  }, []);
 
   const loadQuote = useCallback(async () => {
     setIsLoading(true);
@@ -51,14 +67,80 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
         name: product.name,
         slug: product.slug,
         baseCost: product.baseCost,
+        costCurrency: product.costCurrency,
         variants: product.variants,
       })));
+      setProductCostById(
+        productsResponse.data.reduce<Record<string, { baseCost: string | number | null; costCurrency: string | null }>>(
+          (acc, product) => {
+            acc[product.id] = {
+              baseCost: product.baseCost ?? null,
+              costCurrency: product.costCurrency ?? null,
+            };
+            return acc;
+          },
+          {},
+        ),
+      );
     } catch {
       setError("No se pudieron cargar los detalles de la cotización de venta.");
     } finally {
       setIsLoading(false);
     }
   }, [quoteId]);
+
+  const ensureProductCost = useCallback(async (productId: string) => {
+    if (!productId) return;
+
+    const optionFromList = productOptions.find((product) => product.id === productId);
+    if (optionFromList && hasDefinedCost(optionFromList.baseCost)) {
+      setProductCostById((previous) => ({
+        ...previous,
+        [productId]: {
+          baseCost: optionFromList.baseCost ?? null,
+          costCurrency: optionFromList.costCurrency ?? null,
+        },
+      }));
+      resolvedProductCostIdsRef.current = {
+        ...resolvedProductCostIdsRef.current,
+        [productId]: true,
+      };
+      return;
+    }
+
+    if (resolvedProductCostIdsRef.current[productId] || resolvingProductCostIdsRef.current[productId]) return;
+
+    setResolvingProductCostIds((previous) => ({ ...previous, [productId]: true }));
+    resolvingProductCostIdsRef.current = {
+      ...resolvingProductCostIdsRef.current,
+      [productId]: true,
+    };
+    try {
+      const response = await salesQuotesService.getProductOptionById(productId);
+      setProductCostById((previous) => ({
+        ...previous,
+        [productId]: {
+          baseCost: response.data.baseCost ?? null,
+          costCurrency: response.data.costCurrency ?? null,
+        },
+      }));
+    } catch {
+      // Keep silent; UI will show fallback text.
+    } finally {
+      resolvedProductCostIdsRef.current = {
+        ...resolvedProductCostIdsRef.current,
+        [productId]: true,
+      };
+      setResolvingProductCostIds((previous) => {
+        const next = { ...previous };
+        delete next[productId];
+        return next;
+      });
+      const nextResolving = { ...resolvingProductCostIdsRef.current };
+      delete nextResolving[productId];
+      resolvingProductCostIdsRef.current = nextResolving;
+    }
+  }, [hasDefinedCost, productOptions]);
 
   const withMutationState = useCallback(async (operation: () => Promise<void>) => {
     setIsSaving(true);
@@ -130,6 +212,15 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
     });
   }, [quoteId, withMutationState]);
 
+  const addInternalNote = useCallback(async (message: string) => {
+    await withMutationState(async () => {
+      await salesQuotesService.addInternalNote(quoteId, { message });
+      const detail = await salesQuotesService.getById(quoteId);
+      setQuote(detail.data);
+      setSuccessMessage("Nota interna agregada correctamente.");
+    });
+  }, [quoteId, withMutationState]);
+
   const completeSale = useCallback(async () => {
     setIsSaving(true);
     setError(null);
@@ -160,6 +251,9 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
   return {
     quote,
     productOptions: stableProducts,
+    productCostById,
+    ensureProductCost,
+    resolvingProductCostIds,
     isLoading,
     isSaving,
     error,
@@ -170,6 +264,7 @@ export function useSalesQuoteDetail(quoteId: string): UseSalesQuoteDetailResult 
     updateItem,
     deleteItem,
     recalculate,
+    addInternalNote,
     completeSale,
   };
 }

@@ -15,6 +15,18 @@ type BlobResponse = {
   headers: Headers;
 };
 
+export class ApiClientError extends Error {
+  status: number;
+  data?: unknown;
+
+  constructor(status: number, message: string, data?: unknown) {
+    super(message);
+    this.name = "ApiClientError";
+    this.status = status;
+    this.data = data;
+  }
+}
+
 class ApiClient {
   private readonly baseUrl: string;
 
@@ -74,7 +86,30 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
+      let message = `API request failed: ${response.status}`;
+      let data: unknown;
+
+      try {
+        const contentType = response.headers.get("content-type") ?? "";
+        if (contentType.includes("application/json")) {
+          data = await response.json();
+          if (
+            typeof data === "object" &&
+            data !== null &&
+            "message" in data &&
+            typeof (data as { message?: unknown }).message === "string"
+          ) {
+            message = (data as { message: string }).message;
+          }
+        } else {
+          const text = await response.text();
+          if (text.trim().length > 0) message = text;
+        }
+      } catch {
+        // Keep fallback message when parsing fails.
+      }
+
+      throw new ApiClientError(response.status, message, data);
     }
 
     return response;

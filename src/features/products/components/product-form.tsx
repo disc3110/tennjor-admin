@@ -13,6 +13,8 @@ export type ProductFormValues = {
   description: string;
   categoryId: string;
   isActive: boolean;
+  baseCost: string;
+  costCurrency: string;
 };
 
 type ProductFormProps = {
@@ -35,6 +37,8 @@ export function ProductForm({
   const [description, setDescription] = useState(initialValues.description);
   const [categoryId, setCategoryId] = useState(initialValues.categoryId);
   const [isActive, setIsActive] = useState(initialValues.isActive);
+  const [baseCost, setBaseCost] = useState(initialValues.baseCost);
+  const [costCurrency, setCostCurrency] = useState(initialValues.costCurrency || "MXN");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,6 +48,8 @@ export function ProductForm({
       description: description.trim(),
       categoryId,
       isActive,
+      baseCost: baseCost.trim(),
+      costCurrency: costCurrency.trim().toUpperCase() || "MXN",
     });
   };
 
@@ -59,6 +65,32 @@ export function ProductForm({
           <label className="space-y-2">
             <span className="text-sm font-medium text-slate-700">Slug</span>
             <Input value={slug} onChange={(event) => setSlug(event.target.value)} required />
+          </label>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="space-y-2">
+            <span className="text-sm font-medium text-slate-700">Costo base</span>
+            <Input
+              type="number"
+              min={0}
+              step="0.01"
+              className="no-number-spinner"
+              value={baseCost}
+              onChange={(event) => setBaseCost(event.target.value)}
+              placeholder="0.00"
+            />
+            <p className="text-xs text-slate-500">Costo interno por unidad. Solo visible en administración.</p>
+          </label>
+
+          <label className="space-y-2">
+            <span className="text-sm font-medium text-slate-700">Moneda del costo</span>
+            <Input
+              value={costCurrency}
+              onChange={(event) => setCostCurrency(event.target.value.toUpperCase())}
+              placeholder="MXN"
+              maxLength={3}
+            />
           </label>
         </div>
 
