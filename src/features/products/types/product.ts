@@ -7,15 +7,11 @@ export type ProductAdminCategory = {
 export type ProductAdminImage = {
   id: string;
   url: string;
-  secureUrl: string | null;
-  publicId: string | null;
   alt: string | null;
   order: number;
 };
 
 export type ProductAdminImageDetail = ProductAdminImage & {
-  createdAt: string;
-  updatedAt: string;
   productId?: string;
 };
 
@@ -171,12 +167,6 @@ export type DeleteProductImageResponse = {
   message: string;
   data: {
     id: string;
-    publicId: string | null;
-    cloudinaryCleanup: {
-      attempted: boolean;
-      result?: string;
-      error?: string;
-    };
   };
 };
 
@@ -186,7 +176,6 @@ export type DeleteProductResponse = {
     id: string;
     deletedVariants: boolean;
     deletedImages: boolean;
-    cloudinaryCleanupPendingPublicIds: string[];
   };
 };
 

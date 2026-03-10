@@ -21,7 +21,6 @@ export type CategoryProductSnapshot = {
   images: Array<{
     id: string;
     url: string;
-    secureUrl: string | null;
     alt: string | null;
     order: number;
   }>;

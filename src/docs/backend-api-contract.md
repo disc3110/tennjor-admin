@@ -338,13 +338,9 @@ curl -X GET 'http://localhost:3000/catalog/products?category=tenis'
       {
         "id": "img_1",
         "url": "https://...",
-        "secureUrl": null,
-        "publicId": null,
         "alt": "Front",
         "order": 0,
-        "productId": "prod_1",
-        "createdAt": "...",
-        "updatedAt": "..."
+        "productId": "prod_1"
       }
     ],
     "variants": [
@@ -1104,8 +1100,6 @@ curl -X GET 'http://localhost:3000/admin/products?page=1&limit=10&isActive=true'
         {
           "id": "img_1",
           "url": "https://...",
-          "secureUrl": null,
-          "publicId": null,
           "alt": "Front",
           "order": 0
         }
@@ -1198,12 +1192,8 @@ curl -X GET http://localhost:3000/admin/products/prod_1 \
       {
         "id": "img_1",
         "url": "https://...",
-        "secureUrl": null,
-        "publicId": null,
         "alt": "Front",
-        "order": 0,
-        "createdAt": "...",
-        "updatedAt": "..."
+        "order": 0
       }
     ],
     "variants": [
@@ -1349,14 +1339,13 @@ curl -X PATCH http://localhost:3000/admin/products/prod_1 \
 - Query: None.
 - Request body: None.
 - Response body:
-  - `{ message: "Product deleted successfully.", data: { id, deletedVariants, deletedImages, cloudinaryCleanupPendingPublicIds } }`
+  - `{ message: "Product deleted successfully.", data: { id, deletedVariants, deletedImages } }`
 - Error cases:
   - `401` auth
   - `404` product not found
   - `400` product has quote-request references and cannot be deleted
 - Notes:
   - Service uses explicit transactional cleanup (`variants`, `images`, then `product`).
-  - `cloudinaryCleanupPendingPublicIds` is returned as a hook for future Cloudinary physical asset deletion.
 - Example request:
 
 ```bash
@@ -1372,8 +1361,7 @@ curl -X DELETE http://localhost:3000/admin/products/prod_1 \
   "data": {
     "id": "prod_1",
     "deletedVariants": true,
-    "deletedImages": true,
-    "cloudinaryCleanupPendingPublicIds": ["catalog/prod_1/front"]
+    "deletedImages": true
   }
 }
 ```
@@ -1566,7 +1554,7 @@ curl -X DELETE http://localhost:3000/admin/variants/var_2 \
 - Query: None.
 - Request body:
   - required `url` (valid URL)
-  - optional `secureUrl`, `publicId`, `alt`, `order` (int >= 0)
+  - optional `alt`, `order` (int >= 0)
 - Response body:
   - `{ message: "Product image created successfully.", data: ... }`
 - Error cases:
@@ -1590,13 +1578,9 @@ curl -X POST http://localhost:3000/admin/products/prod_1/images \
   "data": {
     "id": "img_2",
     "url": "https://cdn.example.com/alpha-side.jpg",
-    "secureUrl": null,
-    "publicId": null,
     "alt": "Side",
     "order": 1,
-    "productId": "prod_1",
-    "createdAt": "...",
-    "updatedAt": "..."
+    "productId": "prod_1"
   }
 }
 ```
@@ -1608,7 +1592,7 @@ curl -X POST http://localhost:3000/admin/products/prod_1/images \
 - Params: `id`.
 - Query: None.
 - Request body: any subset of
-  - `url`, `secureUrl`, `publicId`, `alt`, `order`
+  - `url`, `alt`, `order`
 - Response body:
   - `{ message: "Product image updated successfully.", data: ... }`
 - Error cases:
@@ -1632,13 +1616,9 @@ curl -X PATCH http://localhost:3000/admin/product-images/img_2 \
   "data": {
     "id": "img_2",
     "url": "https://cdn.example.com/alpha-side.jpg",
-    "secureUrl": null,
-    "publicId": null,
     "alt": "Side",
     "order": 0,
-    "productId": "prod_1",
-    "createdAt": "...",
-    "updatedAt": "..."
+    "productId": "prod_1"
   }
 }
 ```
@@ -1651,7 +1631,7 @@ curl -X PATCH http://localhost:3000/admin/product-images/img_2 \
 - Query: None.
 - Request body: None.
 - Response body:
-  - `{ message: "Product image deleted successfully.", data: { id, publicId } }`
+  - `{ message: "Product image deleted successfully.", data: { id } }`
 - Error cases:
   - `401` auth
   - `404` image not found
@@ -1668,8 +1648,7 @@ curl -X DELETE http://localhost:3000/admin/product-images/img_2 \
 {
   "message": "Product image deleted successfully.",
   "data": {
-    "id": "img_2",
-    "publicId": null
+    "id": "img_2"
   }
 }
 ```
@@ -1792,7 +1771,6 @@ curl -X GET http://localhost:3000/admin/categories/cat_1 \
           {
             "id": "img_1",
             "url": "https://...",
-            "secureUrl": null,
             "alt": "Front",
             "order": 0
           }
@@ -1931,7 +1909,7 @@ curl -X DELETE http://localhost:3000/admin/categories/cat_1 \
     "deletedProductsCount": 12,
     "deletedVariants": true,
     "deletedImages": true,
-    "cloudinaryCleanupPendingPublicIds": ["catalog/prod_1/front"]
+    "cloudinaryCleanupPendingPublicIds": ["tennjor/categories/tenis/web"]
   }
 }
 ```
@@ -2210,7 +2188,6 @@ curl -X POST http://localhost:3000/admin/quote-requests/qr_1/convert-to-sales-qu
 - Product images are separate records with ordering via `order` (int, default `0`).
 - Public product endpoints sort images by `order ASC`.
 - Admin category detail only includes first image per product (`take: 1`).
-- `secureUrl` and `publicId` are optional; useful for cloud image providers.
 
 ### Quote Requests
 
