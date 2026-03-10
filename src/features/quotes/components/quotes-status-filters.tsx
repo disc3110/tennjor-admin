@@ -9,11 +9,11 @@ type QuotesStatusFiltersProps = {
 };
 
 const filters: { value: QuoteStatusFilter; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "new", label: "New" },
-  { value: "reviewed", label: "Reviewed" },
-  { value: "quoted", label: "Quoted" },
-  { value: "closed", label: "Closed" },
+  { value: "all", label: "Todas" },
+  { value: "new", label: "Nuevas" },
+  { value: "reviewed", label: "Revisadas" },
+  { value: "quoted", label: "Cotizadas" },
+  { value: "closed", label: "Cerradas" },
 ];
 
 export function QuotesStatusFilters({ value, onChange }: QuotesStatusFiltersProps) {

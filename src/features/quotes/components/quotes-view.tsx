@@ -69,8 +69,8 @@ export function QuotesView() {
   return (
     <section className="space-y-6">
       <PageHeader
-        title="Quotes"
-        subtitle="Customer quote requests from the storefront."
+        title="Cotizaciones"
+        subtitle="Solicitudes de cotización de clientes desde la tienda."
         action={
           <Button
             variant="secondary"
@@ -82,30 +82,30 @@ export function QuotesView() {
             }}
             className="w-full md:w-auto"
           >
-            Refresh
+            Actualizar
           </Button>
         }
       />
 
       <Card>
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-slate-500">Filter by current quote status</p>
+          <p className="text-sm text-slate-500">Filtrar por estado actual de cotización</p>
           <QuotesStatusFilters value={selectedFilter} onChange={handleFilterChange} />
         </div>
       </Card>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total Quotes</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total de cotizaciones</p>
           <p className="text-3xl font-semibold text-slate-900">{meta?.total ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Page</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Página</p>
           <p className="text-3xl font-semibold text-slate-900">{meta?.page ?? "--"}</p>
         </Card>
         <Card className="space-y-1">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            Total Pages
+            Total de páginas
           </p>
           <p className="text-3xl font-semibold text-slate-900">{meta?.totalPages ?? "--"}</p>
         </Card>
@@ -115,7 +115,7 @@ export function QuotesView() {
 
       {!isLoading && error ? (
         <Card className="py-14 text-center">
-          <h2 className="text-lg font-semibold text-slate-900">Could not load quotes</h2>
+          <h2 className="text-lg font-semibold text-slate-900">No se pudieron cargar las cotizaciones</h2>
           <p className="mt-2 text-sm text-slate-500">{error}</p>
         </Card>
       ) : null}

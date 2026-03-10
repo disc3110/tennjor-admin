@@ -32,7 +32,7 @@ export function useQuotes(query: GetAdminQuoteRequestsQuery = {}): UseQuotesResu
       setQuotes(response.data);
       setMeta(response.meta);
     } catch {
-      setError("Unable to load quotes right now.");
+      setError("No se pudieron cargar las cotizaciones en este momento.");
     } finally {
       setIsLoading(false);
     }

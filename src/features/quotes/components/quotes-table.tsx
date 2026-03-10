@@ -11,14 +11,14 @@ function formatDate(date: string) {
 }
 
 function buildItemsSummary(quote: AdminQuoteRequest) {
-  if (quote.items.length === 0) return "No items";
+  if (quote.items.length === 0) return "Sin artículos";
 
   const firstItem = quote.items[0];
   if (quote.items.length === 1) {
     return `${firstItem.productNameSnapshot} x${firstItem.quantity}`;
   }
 
-  return `${firstItem.productNameSnapshot} +${quote.items.length - 1} more`;
+  return `${firstItem.productNameSnapshot} +${quote.items.length - 1} más`;
 }
 
 export function QuotesTable({ quotes }: QuotesTableProps) {
@@ -27,12 +27,12 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
       <table className="min-w-full divide-y divide-slate-200">
         <thead>
           <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <th className="px-4 py-3">Customer</th>
-            <th className="px-4 py-3">Items</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Source</th>
-            <th className="px-4 py-3">Received</th>
-            <th className="px-4 py-3 text-right">Details</th>
+            <th className="px-4 py-3">Cliente</th>
+            <th className="px-4 py-3">Artículos</th>
+            <th className="px-4 py-3">Estado</th>
+            <th className="px-4 py-3">Origen</th>
+            <th className="px-4 py-3">Recibida</th>
+            <th className="px-4 py-3 text-right">Detalle</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 bg-white">
@@ -45,7 +45,7 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
               </td>
               <td className="px-4 py-4">
                 <p className="text-sm text-slate-700">{buildItemsSummary(quote)}</p>
-                <p className="text-xs text-slate-500">{quote.items.length} line(s)</p>
+                <p className="text-xs text-slate-500">{quote.items.length} línea(s)</p>
               </td>
               <td className="px-4 py-4">
                 <QuoteStatusBadge status={quote.status} />
@@ -57,7 +57,7 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
                   href={`/admin/quotes/${quote.id}`}
                   className="text-sm font-medium text-slate-700 underline-offset-4 hover:text-slate-900 hover:underline"
                 >
-                  Open
+                  Abrir
                 </Link>
               </td>
             </tr>

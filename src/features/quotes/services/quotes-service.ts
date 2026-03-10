@@ -1,4 +1,5 @@
 import type {
+  ConvertQuoteRequestToSalesQuoteResponse,
   GetAdminQuoteRequestByIdResponse,
   AdminQuoteRequestsResponse,
   GetAdminQuoteRequestsQuery,
@@ -34,6 +35,14 @@ export const quotesService = {
       {
         method: "PATCH",
         body: payload,
+      },
+    );
+  },
+  convertToSalesQuote(id: string) {
+    return apiClient.request<ConvertQuoteRequestToSalesQuoteResponse>(
+      `/admin/quote-requests/${id}/convert-to-sales-quote`,
+      {
+        method: "POST",
       },
     );
   },
