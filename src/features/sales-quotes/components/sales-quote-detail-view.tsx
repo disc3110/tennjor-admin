@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, RotateCw } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, RotateCw } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
@@ -59,6 +59,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
     discountValue: "",
   });
   const [internalNoteDraft, setInternalNoteDraft] = useState("");
+  const [isAddProductExpanded, setIsAddProductExpanded] = useState(false);
   const selectedProductId = itemDraft.productId;
 
   const selectedProduct = useMemo(
@@ -334,12 +335,28 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
               </table>
             </div>
 
-            <div className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <div>
-                <h3 className="text-base font-semibold text-slate-900">Agregar producto</h3>
-                <p className="text-sm text-slate-600">Completa los datos para agregar un nuevo artículo a la cotización.</p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between rounded-lg text-left"
+                onClick={() => setIsAddProductExpanded((current) => !current)}
+              >
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900">Agregar producto</h3>
+                  <p className="text-sm text-slate-600">
+                    Completa los datos para agregar un nuevo artículo a la cotización.
+                  </p>
+                </div>
+                {isAddProductExpanded ? (
+                  <ChevronUp className="size-5 text-slate-500" />
+                ) : (
+                  <ChevronDown className="size-5 text-slate-500" />
+                )}
+              </button>
+
+              {isAddProductExpanded ? (
+                <div className="mt-4 space-y-4">
+                  <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Selección</p>
                   <label className="space-y-1 text-sm">
@@ -417,7 +434,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Referencia</p>
                   <p className="text-sm font-medium text-slate-800">Costo base del producto</p>
@@ -469,7 +486,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Vista previa</p>
                   <InfoRow label="Ingreso estimado" value={formatMoney(estimatedRevenue, quote.currency)} />
@@ -505,6 +522,8 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                   </div>
                 </div>
               </div>
+                </div>
+              ) : null}
             </div>
           </Card>
         </div>
