@@ -335,6 +335,10 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
             </div>
 
             <div className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div>
+                <h3 className="text-base font-semibold text-slate-900">Agregar producto</h3>
+                <p className="text-sm text-slate-600">Completa los datos para agregar un nuevo artículo a la cotización.</p>
+              </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Selección</p>
