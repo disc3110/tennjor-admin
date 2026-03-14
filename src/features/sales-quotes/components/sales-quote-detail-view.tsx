@@ -294,6 +294,46 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
               </Button>
             </div>
 
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead>
+                  <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <th className="px-3 py-2">Producto</th>
+                    <th className="px-3 py-2">Variante</th>
+                    <th className="px-3 py-2">Cant.</th>
+                    <th className="px-3 py-2">Precio venta</th>
+                    <th className="px-3 py-2">Costo</th>
+                    <th className="px-3 py-2">Ingresos</th>
+                    <th className="px-3 py-2">Ganancia</th>
+                    <th className="px-3 py-2">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {quote.items.map((item) => (
+                    <QuoteItemRow
+                      key={item.id}
+                      item={item}
+                      currency={quote.currency}
+                      isEditable={isEditable}
+                      isSaving={isSaving}
+                      isEditing={editingItemId === item.id}
+                      onStartEdit={() => setEditingItemId(item.id)}
+                      onCancelEdit={() => setEditingItemId(null)}
+                      onSave={async (payload) => {
+                        await updateItem(item.id, payload);
+                        setEditingItemId(null);
+                      }}
+                      onDelete={async () => {
+                        const confirmed = window.confirm("¿Eliminar este artículo de la cotización?");
+                        if (!confirmed) return;
+                        await deleteItem(item.id);
+                      }}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
             <div className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
@@ -461,46 +501,6 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead>
-                  <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <th className="px-3 py-2">Producto</th>
-                    <th className="px-3 py-2">Variante</th>
-                    <th className="px-3 py-2">Cant.</th>
-                    <th className="px-3 py-2">Precio venta</th>
-                    <th className="px-3 py-2">Costo</th>
-                    <th className="px-3 py-2">Ingresos</th>
-                    <th className="px-3 py-2">Ganancia</th>
-                    <th className="px-3 py-2">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {quote.items.map((item) => (
-                    <QuoteItemRow
-                      key={item.id}
-                      item={item}
-                      currency={quote.currency}
-                      isEditable={isEditable}
-                      isSaving={isSaving}
-                      isEditing={editingItemId === item.id}
-                      onStartEdit={() => setEditingItemId(item.id)}
-                      onCancelEdit={() => setEditingItemId(null)}
-                      onSave={async (payload) => {
-                        await updateItem(item.id, payload);
-                        setEditingItemId(null);
-                      }}
-                      onDelete={async () => {
-                        const confirmed = window.confirm("¿Eliminar este artículo de la cotización?");
-                        if (!confirmed) return;
-                        await deleteItem(item.id);
-                      }}
-                    />
-                  ))}
-                </tbody>
-              </table>
             </div>
           </Card>
         </div>
