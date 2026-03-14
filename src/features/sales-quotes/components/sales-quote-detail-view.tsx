@@ -336,23 +336,28 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
             </div>
 
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <button
-                type="button"
-                className="flex w-full items-center justify-between rounded-lg text-left"
-                onClick={() => setIsAddProductExpanded((current) => !current)}
-              >
+              <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-base font-semibold text-slate-900">Agregar producto</h3>
                   <p className="text-sm text-slate-600">
                     Completa los datos para agregar un nuevo artículo a la cotización.
                   </p>
                 </div>
-                {isAddProductExpanded ? (
-                  <ChevronUp className="size-5 text-slate-500" />
-                ) : (
-                  <ChevronDown className="size-5 text-slate-500" />
-                )}
-              </button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="shrink-0 p-2"
+                  aria-expanded={isAddProductExpanded}
+                  aria-label={isAddProductExpanded ? "Contraer formulario de producto" : "Expandir formulario de producto"}
+                  onClick={() => setIsAddProductExpanded((current) => !current)}
+                >
+                  {isAddProductExpanded ? (
+                    <ChevronUp className="size-5 text-slate-500" />
+                  ) : (
+                    <ChevronDown className="size-5 text-slate-500" />
+                  )}
+                </Button>
+              </div>
 
               {isAddProductExpanded ? (
                 <div className="mt-4 space-y-4">
