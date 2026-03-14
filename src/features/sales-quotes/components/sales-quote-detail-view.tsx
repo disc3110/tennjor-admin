@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, RotateCw } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, RotateCw } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
@@ -59,6 +59,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
     discountValue: "",
   });
   const [internalNoteDraft, setInternalNoteDraft] = useState("");
+  const [isAddProductExpanded, setIsAddProductExpanded] = useState(false);
   const selectedProductId = itemDraft.productId;
 
   const selectedProduct = useMemo(
@@ -294,8 +295,73 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
               </Button>
             </div>
 
-            <div className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead>
+                  <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <th className="px-3 py-2">Producto</th>
+                    <th className="px-3 py-2">Variante</th>
+                    <th className="px-3 py-2">Cant.</th>
+                    <th className="px-3 py-2">Precio venta</th>
+                    <th className="px-3 py-2">Costo</th>
+                    <th className="px-3 py-2">Ingresos</th>
+                    <th className="px-3 py-2">Ganancia</th>
+                    <th className="px-3 py-2">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {quote.items.map((item) => (
+                    <QuoteItemRow
+                      key={item.id}
+                      item={item}
+                      currency={quote.currency}
+                      isEditable={isEditable}
+                      isSaving={isSaving}
+                      isEditing={editingItemId === item.id}
+                      onStartEdit={() => setEditingItemId(item.id)}
+                      onCancelEdit={() => setEditingItemId(null)}
+                      onSave={async (payload) => {
+                        await updateItem(item.id, payload);
+                        setEditingItemId(null);
+                      }}
+                      onDelete={async () => {
+                        const confirmed = window.confirm("¿Eliminar este artículo de la cotización?");
+                        if (!confirmed) return;
+                        await deleteItem(item.id);
+                      }}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900">Agregar producto</h3>
+                  <p className="text-sm text-slate-600">
+                    Completa los datos para agregar un nuevo artículo a la cotización.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="shrink-0 p-2"
+                  aria-expanded={isAddProductExpanded}
+                  aria-label={isAddProductExpanded ? "Contraer formulario de producto" : "Expandir formulario de producto"}
+                  onClick={() => setIsAddProductExpanded((current) => !current)}
+                >
+                  {isAddProductExpanded ? (
+                    <ChevronUp className="size-5 text-slate-500" />
+                  ) : (
+                    <ChevronDown className="size-5 text-slate-500" />
+                  )}
+                </Button>
+              </div>
+
+              {isAddProductExpanded ? (
+                <div className="mt-4 space-y-4">
+                  <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Selección</p>
                   <label className="space-y-1 text-sm">
@@ -373,7 +439,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Referencia</p>
                   <p className="text-sm font-medium text-slate-800">Costo base del producto</p>
@@ -425,7 +491,7 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Vista previa</p>
                   <InfoRow label="Ingreso estimado" value={formatMoney(estimatedRevenue, quote.currency)} />
@@ -461,46 +527,8 @@ export function SalesQuoteDetailView({ quoteId }: SalesQuoteDetailViewProps) {
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead>
-                  <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <th className="px-3 py-2">Producto</th>
-                    <th className="px-3 py-2">Variante</th>
-                    <th className="px-3 py-2">Cant.</th>
-                    <th className="px-3 py-2">Precio venta</th>
-                    <th className="px-3 py-2">Costo</th>
-                    <th className="px-3 py-2">Ingresos</th>
-                    <th className="px-3 py-2">Ganancia</th>
-                    <th className="px-3 py-2">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {quote.items.map((item) => (
-                    <QuoteItemRow
-                      key={item.id}
-                      item={item}
-                      currency={quote.currency}
-                      isEditable={isEditable}
-                      isSaving={isSaving}
-                      isEditing={editingItemId === item.id}
-                      onStartEdit={() => setEditingItemId(item.id)}
-                      onCancelEdit={() => setEditingItemId(null)}
-                      onSave={async (payload) => {
-                        await updateItem(item.id, payload);
-                        setEditingItemId(null);
-                      }}
-                      onDelete={async () => {
-                        const confirmed = window.confirm("¿Eliminar este artículo de la cotización?");
-                        if (!confirmed) return;
-                        await deleteItem(item.id);
-                      }}
-                    />
-                  ))}
-                </tbody>
-              </table>
+                </div>
+              ) : null}
             </div>
           </Card>
         </div>

@@ -27,6 +27,7 @@ export function ProductsView() {
   const searchParams = useSearchParams();
   const statusFilter = parseStatusFilter(searchParams.get("status"));
   const searchQuery = searchParams.get("search") ?? "";
+  const currentPage = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
   const categoryId = searchParams.get("categoryId") ?? "";
   const { isExporting, exportError, exportCsv } = useProductsExport();
 
@@ -39,14 +40,14 @@ export function ProductsView() {
     refetch,
     toggleProductActive,
   } = useProducts({
-    page: 1,
+    page: currentPage,
     limit: 20,
     search: searchQuery || undefined,
     isActive:
       statusFilter === "active" ? true : statusFilter === "inactive" ? false : undefined,
   });
 
-  const updateQuery = (next: { status?: StatusFilter; search?: string }) => {
+  const updateQuery = (next: { status?: StatusFilter; search?: string; page?: number }) => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (!next.status || next.status === "all") params.delete("status");
@@ -54,6 +55,10 @@ export function ProductsView() {
 
     if (!next.search) params.delete("search");
     else params.set("search", next.search);
+
+    const safePage = next.page && next.page > 1 ? next.page : 1;
+    if (safePage <= 1) params.delete("page");
+    else params.set("page", String(safePage));
 
     const query = params.toString();
     router.replace(query ? `${pathname}?${query}` : pathname);
@@ -63,7 +68,7 @@ export function ProductsView() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const search = String(formData.get("search") ?? "").trim();
-    updateQuery({ status: statusFilter, search });
+    updateQuery({ status: statusFilter, search, page: 1 });
   };
 
   return (
@@ -129,19 +134,19 @@ export function ProductsView() {
           <div className="flex flex-wrap gap-2">
             <Button
               variant={statusFilter === "all" ? "primary" : "secondary"}
-              onClick={() => updateQuery({ status: "all", search: searchQuery })}
+              onClick={() => updateQuery({ status: "all", search: searchQuery, page: 1 })}
             >
               Todos
             </Button>
             <Button
               variant={statusFilter === "active" ? "primary" : "secondary"}
-              onClick={() => updateQuery({ status: "active", search: searchQuery })}
+              onClick={() => updateQuery({ status: "active", search: searchQuery, page: 1 })}
             >
               Activos
             </Button>
             <Button
               variant={statusFilter === "inactive" ? "primary" : "secondary"}
-              onClick={() => updateQuery({ status: "inactive", search: searchQuery })}
+              onClick={() => updateQuery({ status: "inactive", search: searchQuery, page: 1 })}
             >
               Inactivos
             </Button>
@@ -188,17 +193,53 @@ export function ProductsView() {
       {!isLoading && !error && products.length === 0 ? <ProductsEmptyState /> : null}
 
       {!isLoading && !error && products.length > 0 ? (
-        <Card className="p-0">
-          <ProductsTable
-            products={products}
-            isUpdating={isUpdating}
-            onToggleStatus={(product) => {
-              toggleProductActive(product).catch(() => {
-                // Errors are handled in hook state.
-              });
-            }}
-          />
-        </Card>
+        <div className="space-y-4">
+          <Card className="p-0">
+            <ProductsTable
+              products={products}
+              isUpdating={isUpdating}
+              onToggleStatus={(product) => {
+                toggleProductActive(product).catch(() => {
+                  // Errors are handled in hook state.
+                });
+              }}
+            />
+          </Card>
+
+          <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-slate-600">
+              Página {meta?.page ?? currentPage} de {meta?.totalPages ?? 1}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                disabled={(meta?.page ?? currentPage) <= 1}
+                onClick={() =>
+                  updateQuery({
+                    status: statusFilter,
+                    search: searchQuery,
+                    page: (meta?.page ?? currentPage) - 1,
+                  })
+                }
+              >
+                Anterior
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={(meta?.page ?? currentPage) >= (meta?.totalPages ?? 1)}
+                onClick={() =>
+                  updateQuery({
+                    status: statusFilter,
+                    search: searchQuery,
+                    page: (meta?.page ?? currentPage) + 1,
+                  })
+                }
+              >
+                Siguiente
+              </Button>
+            </div>
+          </Card>
+        </div>
       ) : null}
     </section>
   );
